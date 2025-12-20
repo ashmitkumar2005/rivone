@@ -16,7 +16,7 @@ export default function Home() {
 
       <div className="space-y-4">
         <h1 className="text-6xl font-bold tracking-tighter text-white">
-          RIVON
+          RIVONE
         </h1>
         <p className="text-zinc-400 text-lg font-medium">
           Private Music. Your Space.
