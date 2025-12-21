@@ -8,23 +8,38 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url)
         const fileId = searchParams.get("id")
 
-        console.log("Streaming request for fileId:", fileId)
-
         if (!fileId) {
             return new Response("missing file id", { status: 400 })
         }
 
         const token = process.env.BOT_TOKEN
         if (!token) {
-            console.error("BOT_TOKEN is missing in environment variables")
+            console.error("BOT_TOKEN is missing")
             return new Response("BOT_TOKEN missing", { status: 500 })
         }
 
-        console.log("Fetching file metadata from Telegram...")
-        const metaRes = await fetch(
-            `https://api.telegram.org/bot${token}/getFile?file_id=${fileId}`,
-            { cache: "no-store" }
-        )
+        // Fetch metadata with timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
+
+        let metaRes;
+        try {
+            metaRes = await fetch(
+                `https://api.telegram.org/bot${token}/getFile?file_id=${fileId}`,
+                {
+                    cache: "no-store",
+                    signal: controller.signal
+                }
+            );
+        } catch (error: any) {
+            clearTimeout(timeoutId);
+            if (error.name === 'AbortError') {
+                console.error("Telegram API timeout (metadata)");
+                return new Response("Telegram API timeout", { status: 504 });
+            }
+            throw error;
+        }
+        clearTimeout(timeoutId);
 
         if (!metaRes.ok) {
             const errorText = await metaRes.text()
@@ -39,8 +54,8 @@ export async function GET(request: NextRequest) {
         }
 
         const filePath = meta.result.file_path
-        console.log("Fetching actual file from Telegram:", filePath)
 
+        // Fetch actual file
         const fileRes = await fetch(
             `https://api.telegram.org/file/bot${token}/${filePath}`,
             { cache: "no-store" }
@@ -52,17 +67,15 @@ export async function GET(request: NextRequest) {
         }
 
         if (!fileRes.body) {
-            console.error("Telegram response body is empty")
             return new Response("empty audio stream", { status: 500 })
         }
 
         const download = searchParams.get("download") === "true"
 
-        console.log("Streaming audio to client...")
         return new Response(fileRes.body, {
             headers: {
                 "Content-Type": "audio/mpeg",
-                "Cache-Control": "no-store",
+                "Cache-Control": "public, max-age=3600",
                 "Content-Length": fileRes.headers.get("Content-Length") || "",
                 ...(download && {
                     "Content-Disposition": 'attachment; filename="music.mp3"',
@@ -70,7 +83,7 @@ export async function GET(request: NextRequest) {
             },
         })
     } catch (error: any) {
-        console.error("Internal Server Error in stream route:", error)
-        return new Response(`Internal Server Error: ${error.message}`, { status: 500 })
+        console.error("Stream error with stack:", error)
+        return new Response(`Stream Error: ${error.message}`, { status: 500 })
     }
 }
