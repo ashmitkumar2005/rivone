@@ -102,4 +102,4 @@ rivone/
 
 ---
 
-&copy; 2024 RIVONE. All rights reserved.
+&copy; 2025 RIVONE. All rights reserved.
