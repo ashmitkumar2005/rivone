@@ -109,7 +109,7 @@ export default function ExpandableLogo({ size = 30, isMobile: externalIsMobile }
               ? undefined
               : {
                 width: hovered ? expandedTextWidth : 0,
-                backgroundColor: hovered ? "rgba(255,255,255,0.05)" : "transparent",
+                backgroundColor: "transparent",
               }
           }
           transition={isMobile ? { duration: 0 } : spring}
