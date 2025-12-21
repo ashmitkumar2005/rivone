@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function AccessPage() {
     return (
-        <main className="flex min-h-screen flex-col items-center justify-center p-8">
+        <main className="flex min-h-screen flex-col items-center justify-center p-8 animate-fade-in-up">
             <div className="w-full max-w-sm space-y-8">
                 <div className="text-center space-y-2">
                     <h2 className="text-2xl font-semibold text-white">Access Key</h2>

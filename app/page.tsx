@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-8 text-center">
+    <main className="flex min-h-screen flex-col items-center justify-center p-8 text-center animate-fade-in">
       <div className="absolute top-8 right-8">
         <a
           href="https://rivone.vercel.app/api/stream?id=CQACAgUAAxkBAAMDaUbZFJ5pmX3bSyE-WP2QQ5jnrgIAAlQhAAIaHzlW08gqdGv2Uuo2BA"
