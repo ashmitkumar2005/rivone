@@ -7,7 +7,7 @@ export function Navbar() {
             <Link href="/" className="pointer-events-auto flex items-center gap-2 group">
                 <div className="relative w-8 h-8 md:w-10 md:h-10 overflow-hidden rounded-xl border border-white/10 shadow-lg shadow-white/5 transition-transform duration-500 group-hover:scale-105">
                     <Image
-                        src="/icon.png"
+                        src="/navbar-logo.svg"
                         alt="RIVONE Logo"
                         fill
                         className="object-cover"
