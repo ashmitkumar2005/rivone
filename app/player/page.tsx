@@ -21,6 +21,7 @@ export default function PlayerPage() {
     const [isHoveringUI, setIsHoveringUI] = useState(false);
     const [isSyncing, setIsSyncing] = useState(false);
     const analyserRef = useRef<AnalyserNode | null>(null);
+    const gainNodeRef = useRef<GainNode | null>(null);
     const audioContextRef = useRef<AudioContext | null>(null);
 
     const fetchSongs = async () => {
@@ -91,14 +92,22 @@ export default function PlayerPage() {
             const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
             const ctx = new AudioContextClass();
             const analyser = ctx.createAnalyser();
+            const gainNode = ctx.createGain();
             const source = ctx.createMediaElementSource(audio);
 
             analyser.fftSize = 256;
-            source.connect(analyser);
+
+            // Connect: Source -> Gain -> Analyser -> Destination
+            source.connect(gainNode);
+            gainNode.connect(analyser);
             analyser.connect(ctx.destination);
+
+            // Set initial gain
+            gainNode.gain.value = volume;
 
             audioContextRef.current = ctx;
             analyserRef.current = analyser;
+            gainNodeRef.current = gainNode;
 
             const dataArray = new Uint8Array(analyser.frequencyBinCount);
             const analyze = () => {
@@ -166,8 +175,10 @@ export default function PlayerPage() {
 
     const handleVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
         const vol = parseFloat(e.target.value);
-        if (audioRef.current) {
-            audioRef.current.volume = vol;
+        if (audioRef.current && gainNodeRef.current) {
+            // Keep native volume at 1 and use gain node for control
+            audioRef.current.volume = 1;
+            gainNodeRef.current.gain.value = vol;
             setVolume(vol);
         }
     };
@@ -327,7 +338,7 @@ export default function PlayerPage() {
                                 <input
                                     type="range"
                                     min="0"
-                                    max="1"
+                                    max="2"
                                     step="0.01"
                                     value={volume}
                                     onChange={handleVolume}
