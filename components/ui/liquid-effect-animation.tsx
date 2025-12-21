@@ -29,10 +29,13 @@ export function LiquidEffectAnimation() {
         window.__liquidApp = app;
 
         function animate() {
+          const intensity = window.__audioIntensity || 0;
+          const dynamicScale = defaultScale * (1 + intensity * 2.0); // Boost ripples with music
+
           if (window.__isHoveringUI) {
             app.liquidPlane.uniforms.displacementScale.value = 0;
           } else {
-            app.liquidPlane.uniforms.displacementScale.value = defaultScale;
+            app.liquidPlane.uniforms.displacementScale.value = dynamicScale;
           }
           window.__liquidAnimFrame = requestAnimationFrame(animate);
         }
@@ -67,5 +70,6 @@ declare global {
         __liquidApp?: any;
         __isHoveringUI?: boolean;
         __liquidAnimFrame?: number;
+        __audioIntensity?: number;
     }
 }

@@ -5,6 +5,12 @@ import Link from "next/link";
 import { songs, Song } from "@/lib/songs";
 import { LiquidEffectAnimation } from "@/components/ui/liquid-effect-animation";
 
+declare global {
+    interface Window {
+        __audioIntensity?: number;
+    }
+}
+
 export default function PlayerPage() {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const [currentSong, setCurrentSong] = useState<Song | null>(null);
@@ -13,6 +19,8 @@ export default function PlayerPage() {
     const [duration, setDuration] = useState(0);
     const [volume, setVolume] = useState(1);
     const [isHoveringUI, setIsHoveringUI] = useState(false);
+    const analyserRef = useRef<AnalyserNode | null>(null);
+    const audioContextRef = useRef<AudioContext | null>(null);
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -23,6 +31,35 @@ export default function PlayerPage() {
     useEffect(() => {
         const audio = audioRef.current;
         if (!audio) return;
+
+        // Initialize Web Audio API
+        if (!audioContextRef.current) {
+            const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+            const ctx = new AudioContextClass();
+            const analyser = ctx.createAnalyser();
+            const source = ctx.createMediaElementSource(audio);
+
+            analyser.fftSize = 256;
+            source.connect(analyser);
+            analyser.connect(ctx.destination);
+
+            audioContextRef.current = ctx;
+            analyserRef.current = analyser;
+
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            const analyze = () => {
+                if (analyserRef.current && isPlaying) {
+                    analyserRef.current.getByteFrequencyData(dataArray);
+                    const average = dataArray.reduce((p, c) => p + c, 0) / dataArray.length;
+                    // Normalized intensity (0.0 to 1.0 approx)
+                    window.__audioIntensity = Math.pow(average / 128, 2);
+                } else {
+                    window.__audioIntensity = 0;
+                }
+                requestAnimationFrame(analyze);
+            };
+            analyze();
+        }
 
         const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
         const handleLoadedMetadata = () => setDuration(audio.duration);
@@ -37,7 +74,7 @@ export default function PlayerPage() {
             audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
             audio.removeEventListener("ended", handleEnded);
         };
-    }, []);
+    }, [isPlaying]);
 
     const handleSongClick = (song: Song) => {
         setCurrentSong(song);
@@ -50,6 +87,12 @@ export default function PlayerPage() {
 
     const togglePlay = () => {
         if (!audioRef.current || !currentSong) return;
+
+        // Resume AudioContext on interaction
+        if (audioContextRef.current?.state === 'suspended') {
+            audioContextRef.current.resume();
+        }
+
         if (isPlaying) {
             audioRef.current.pause();
         } else {
