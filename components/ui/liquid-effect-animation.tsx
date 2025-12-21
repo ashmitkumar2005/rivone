@@ -1,64 +1,76 @@
-"use client"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 
 export function LiquidEffectAnimation() {
     const canvasRef = useRef<HTMLCanvasElement>(null)
-    const appRef = useRef<any>(null)
+    const [isReady, setIsReady] = useState(false)
 
     useEffect(() => {
         if (!canvasRef.current) return
 
-        // Load the script dynamically
-        const script = document.createElement("script")
-        script.type = "module"
-        script.textContent = `
-      import LiquidBackground from 'https://cdn.jsdelivr.net/npm/threejs-components@0.0.22/build/backgrounds/liquid1.min.js';
-      const canvas = document.getElementById('liquid-canvas');
-      if (canvas) {
-        const app = LiquidBackground(canvas);
-        app.loadImage('/sky.jpg');
-        const isMobile = window.innerWidth < 768;
-        const defaultScale = isMobile ? 0.05 : 0.4;
+        // Preload image first
+        const image = new Image()
+        image.src = '/sky.jpg'
+        image.onload = () => {
+            // Only load script once image is ready
+            const script = document.createElement("script")
+            script.type = "module"
+            script.textContent = `
+              import LiquidBackground from 'https://cdn.jsdelivr.net/npm/threejs-components@0.0.22/build/backgrounds/liquid1.min.js';
+              const canvas = document.getElementById('liquid-canvas');
+              if (canvas) {
+                const app = LiquidBackground(canvas);
+                app.loadImage('/sky.jpg');
+                const isMobile = window.innerWidth < 768;
+                const defaultScale = isMobile ? 0.05 : 0.4;
+        
+                app.liquidPlane.material.metalness = 0.9;
+                app.liquidPlane.material.roughness = 0.1;
+                app.liquidPlane.uniforms.displacementScale.value = defaultScale;
+                app.liquidPlane.uniforms.uFrequency = { value: isMobile ? 0.2 : 0.5 };
+                app.liquidPlane.uniforms.uSpeed = { value: 0.02 };
+                app.setRain(false);
+                window.__liquidApp = app;
+        
+                function animate() {
+                  const intensity = window.__audioIntensity || 0;
+                  const dynamicScale = defaultScale * (1 + intensity * 6.0); // Stronger pulses
+        
+                  if (window.__isHoveringUI) {
+                    app.liquidPlane.uniforms.displacementScale.value = 0;
+                  } else {
+                    app.liquidPlane.uniforms.displacementScale.value = dynamicScale;
+                  }
+                  window.__liquidAnimFrame = requestAnimationFrame(animate);
+                }
+                animate();
+                
+                // Signal React that animation is initialized
+                window.dispatchEvent(new CustomEvent('liquid-ready'));
+              }
+            `
+            document.body.appendChild(script)
 
-        app.liquidPlane.material.metalness = 0.9;
-        app.liquidPlane.material.roughness = 0.1;
-        app.liquidPlane.uniforms.displacementScale.value = defaultScale;
-        app.liquidPlane.uniforms.uFrequency = { value: isMobile ? 0.2 : 0.5 };
-        app.liquidPlane.uniforms.uSpeed = { value: 0.02 };
-        app.setRain(false);
-        window.__liquidApp = app;
+            const onReady = () => setIsReady(true)
+            window.addEventListener('liquid-ready', onReady)
 
-        function animate() {
-          const intensity = window.__audioIntensity || 0;
-          const dynamicScale = defaultScale * (1 + intensity * 6.0); // Stronger pulses
-
-          if (window.__isHoveringUI) {
-            app.liquidPlane.uniforms.displacementScale.value = 0;
-          } else {
-            // Smoothly lerp towards the target scale or just set it
-            app.liquidPlane.uniforms.displacementScale.value = dynamicScale;
-          }
-          window.__liquidAnimFrame = requestAnimationFrame(animate);
-        }
-        animate();
-      }
-    `
-        document.body.appendChild(script)
-
-        return () => {
-            if (window.__liquidApp && window.__liquidApp.dispose) {
-                window.__liquidApp.dispose()
+            return () => {
+                window.removeEventListener('liquid-ready', onReady)
+                if (window.__liquidApp && window.__liquidApp.dispose) {
+                    window.__liquidApp.dispose()
+                }
+                if (window.__liquidAnimFrame) {
+                    cancelAnimationFrame(window.__liquidAnimFrame)
+                }
+                if (document.body.contains(script)) {
+                    document.body.removeChild(script)
+                }
             }
-            if (window.__liquidAnimFrame) {
-                cancelAnimationFrame(window.__liquidAnimFrame)
-            }
-            document.body.removeChild(script)
         }
     }, [])
 
     return (
         <div
-            className="fixed inset-0 m-0 w-full h-full touch-none overflow-hidden -z-10 brightness-[0.8] contrast-[1.5]"
+            className={`fixed inset-0 m-0 w-full h-full touch-none overflow-hidden -z-10 brightness-[0.8] contrast-[1.5] transition-opacity duration-1000 ${isReady ? "opacity-100" : "opacity-0"}`}
             style={{ fontFamily: '"Montserrat", serif' }}
         >
             <canvas ref={canvasRef} id="liquid-canvas" className="fixed inset-0 w-full h-full" />
