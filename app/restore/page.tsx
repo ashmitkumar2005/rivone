@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Song } from "@/lib/songs";
-import { LiquidEffectAnimation } from "@/components/ui/liquid-effect-animation";
 
 export default function RestorePage() {
     const [deletedSongs, setDeletedSongs] = useState<Song[]>([]);
@@ -44,14 +43,11 @@ export default function RestorePage() {
 
     return (
         <main className="relative min-h-screen w-full flex items-center justify-center p-4 md:p-8 overflow-hidden">
-            <div className="absolute inset-0 z-0 opacity-50 pointer-events-none">
-                <LiquidEffectAnimation />
-            </div>
             <div className="absolute inset-0 bg-black/50 z-0 pointer-events-none" />
 
             <div className="relative z-10 w-full max-w-2xl bg-white/[0.05] backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-8 md:p-12 shadow-2xl flex flex-col max-h-[85vh] animate-fade-in-up">
-                <header className="flex items-center justify-between mb-10">
-                    <div>
+                <header className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-0 mb-10">
+                    <div className="text-center md:text-left">
                         <h2 className="text-3xl font-bold bg-gradient-to-r from-red-400 to-white/50 bg-clip-text text-transparent">
                             Trash Bin
                         </h2>

@@ -94,8 +94,12 @@ footer {
   --foreground: #fafafa;
 }
 
+html {
+  background-color: #000000;
+}
+
 body {
-  background-color: var(--background);
+  background-color: transparent;
   color: var(--foreground);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;

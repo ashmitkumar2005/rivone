@@ -4,6 +4,7 @@ import "./globals.css";
 
 import { Navbar } from "@/components/ui/navbar";
 import { Footer } from "@/components/ui/footer";
+import { BackgroundManager } from "@/components/background-manager";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,8 +29,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-black`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
       >
+        <BackgroundManager />
         <Navbar />
         {children}
         <Footer />

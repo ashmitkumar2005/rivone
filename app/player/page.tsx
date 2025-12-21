@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { songs as initialSongs, Song } from "@/lib/songs";
-import { LiquidEffectAnimation } from "@/components/ui/liquid-effect-animation";
 
 declare global {
     interface Window {
@@ -181,9 +180,6 @@ export default function PlayerPage() {
 
     return (
         <main className="relative min-h-screen w-full flex items-center justify-center p-4 md:p-8 overflow-hidden">
-            <div className={`absolute inset-0 z-0 transition-opacity duration-300 animate-fade-in ${isHoveringUI ? "pointer-events-none" : "pointer-events-auto"}`}>
-                <LiquidEffectAnimation />
-            </div>
             <div className="absolute inset-0 bg-black/30 z-0 pointer-events-none animate-fade-in" />
 
             <div
@@ -191,14 +187,14 @@ export default function PlayerPage() {
                 onMouseEnter={() => setIsHoveringUI(true)}
                 onMouseLeave={() => setIsHoveringUI(false)}
             >
-                <header className="flex items-center justify-between mb-10">
-                    <div>
+                <header className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-0 mb-10">
+                    <div className="text-center md:text-left">
                         <h2 className="text-3xl font-bold bg-gradient-to-r from-white to-white/50 bg-clip-text text-transparent">
                             Song Registry
                         </h2>
                         <p className="text-zinc-500 text-sm mt-1">Select a track to stream</p>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap justify-center items-center gap-3">
                         <button
                             onClick={handleSync}
                             disabled={isSyncing}
@@ -213,7 +209,7 @@ export default function PlayerPage() {
                             {isSyncing ? "Syncing..." : "Sync"}
                         </button>
                         <Link href="/restore" className="px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all text-sm font-medium flex items-center gap-2">
-                            <span className="text-lg">🗑️</span>
+                            Trash
                         </Link>
                         <Link href="/" className="px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all text-sm font-medium">
                             Exit
