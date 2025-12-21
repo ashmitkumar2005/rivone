@@ -229,11 +229,11 @@ export default function PlayerPage() {
                                 }`}
                         >
                             <div className="flex items-center justify-between">
-                                <div>
-                                    <p className={`font-bold text-lg transition-colors ${currentSong?.id === song.id ? "text-black" : "text-white"}`}>
+                                <div className="min-w-0 flex-1 pr-4">
+                                    <p className={`font-bold text-lg transition-colors truncate ${currentSong?.id === song.id ? "text-black" : "text-white"}`}>
                                         {song.title}
                                     </p>
-                                    <p className={`text-sm transition-colors ${currentSong?.id === song.id ? "text-black/60" : "text-zinc-300"}`}>
+                                    <p className={`text-sm transition-colors truncate ${currentSong?.id === song.id ? "text-black/60" : "text-zinc-300"}`}>
                                         {song.artist}
                                     </p>
                                 </div>
