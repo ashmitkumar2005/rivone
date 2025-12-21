@@ -30,6 +30,13 @@ export function LiquidEffectAnimation() {
                 app.liquidPlane.uniforms.uFrequency = { value: defaultFreq };
                 app.liquidPlane.uniforms.uSpeed = { value: 0.02 };
                 app.setRain(false);
+                app.setBouncing(false); // Disable reflections at borders
+                
+                // Increase damping to make waves die out before hitting edges too hard
+                if (app.liquidPlane.uniforms.uDamping) {
+                  app.liquidPlane.uniforms.uDamping.value = 0.98;
+                }
+                
                 window.__liquidApp = app;
         
                 function animate() {

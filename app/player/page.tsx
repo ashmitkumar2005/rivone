@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { songs, Song } from "@/lib/songs";
+import { songs as initialSongs, Song } from "@/lib/songs";
 import { LiquidEffectAnimation } from "@/components/ui/liquid-effect-animation";
 
 declare global {
@@ -13,14 +13,69 @@ declare global {
 
 export default function PlayerPage() {
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const [songs, setSongs] = useState<Song[]>([]);
     const [currentSong, setCurrentSong] = useState<Song | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [volume, setVolume] = useState(1);
     const [isHoveringUI, setIsHoveringUI] = useState(false);
+    const [isSyncing, setIsSyncing] = useState(false);
     const analyserRef = useRef<AnalyserNode | null>(null);
     const audioContextRef = useRef<AudioContext | null>(null);
+
+    const fetchSongs = async () => {
+        try {
+            const res = await fetch("/api/songs");
+            const data = await res.json();
+            if (Array.isArray(data)) {
+                setSongs(data);
+            }
+        } catch (error) {
+            console.error("Failed to fetch songs:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchSongs();
+    }, []);
+
+    const handleSync = async () => {
+        setIsSyncing(true);
+        try {
+            const res = await fetch("/api/sync", { method: "POST" });
+            const data = await res.json();
+            if (data.success) {
+                await fetchSongs();
+            }
+        } catch (error) {
+            console.error("Sync failed:", error);
+        } finally {
+            setIsSyncing(false);
+        }
+    };
+
+    const handleDeleteSong = async (e: React.MouseEvent, id: string) => {
+        e.stopPropagation(); // Prevent song selection
+        if (!confirm("Are you sure you want to delete this song? it won't be restored by sync.")) return;
+
+        try {
+            const res = await fetch("/api/songs/delete", {
+                method: "POST",
+                body: JSON.stringify({ id }),
+            });
+            if (res.ok) {
+                await fetchSongs();
+                if (currentSong?.id === id) {
+                    setCurrentSong(null);
+                    setIsPlaying(false);
+                    if (audioRef.current) audioRef.current.pause();
+                }
+            }
+        } catch (error) {
+            console.error("Delete failed:", error);
+        }
+    };
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -143,9 +198,24 @@ export default function PlayerPage() {
                         </h2>
                         <p className="text-zinc-500 text-sm mt-1">Select a track to stream</p>
                     </div>
-                    <Link href="/" className="px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all text-sm font-medium">
-                        Exit
-                    </Link>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={handleSync}
+                            disabled={isSyncing}
+                            className={`px-4 py-2 rounded-full border transition-all text-sm font-medium flex items-center gap-2 ${isSyncing
+                                ? "bg-white/5 border-white/5 text-zinc-500 cursor-not-allowed"
+                                : "bg-white/10 border-white/20 text-white hover:bg-white/20"
+                                }`}
+                        >
+                            <svg className={`w-4 h-4 ${isSyncing ? "animate-spin" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            {isSyncing ? "Syncing..." : "Sync"}
+                        </button>
+                        <Link href="/" className="px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all text-sm font-medium">
+                            Exit
+                        </Link>
+                    </div>
                 </header>
 
                 <div className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
@@ -167,13 +237,27 @@ export default function PlayerPage() {
                                         {song.artist}
                                     </p>
                                 </div>
-                                {currentSong?.id === song.id && (
-                                    <div className="flex gap-1 items-end h-4">
-                                        <div className="w-1 bg-black animate-[music-bar_0.6s_ease-in-out_infinite]" />
-                                        <div className="w-1 bg-black animate-[music-bar_0.8s_ease-in-out_infinite_0.1s]" />
-                                        <div className="w-1 bg-black animate-[music-bar_0.7s_ease-in-out_infinite_0.2s]" />
-                                    </div>
-                                )}
+                                <div className="flex items-center gap-4">
+                                    {currentSong?.id === song.id && (
+                                        <div className="flex gap-1 items-end h-4">
+                                            <div className="w-1 bg-black animate-[music-bar_0.6s_ease-in-out_infinite]" />
+                                            <div className="w-1 bg-black animate-[music-bar_0.8s_ease-in-out_infinite_0.1s]" />
+                                            <div className="w-1 bg-black animate-[music-bar_0.7s_ease-in-out_infinite_0.2s]" />
+                                        </div>
+                                    )}
+                                    <button
+                                        onClick={(e) => handleDeleteSong(e, song.id)}
+                                        className={`p-2 rounded-xl transition-all ${currentSong?.id === song.id
+                                            ? "text-black/40 hover:text-black hover:bg-black/5"
+                                            : "text-white/20 hover:text-red-400 hover:bg-white/10"
+                                            }`}
+                                        title="Delete song"
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         </button>
                     ))}
