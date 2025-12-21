@@ -272,7 +272,8 @@ export default function PlayerPage() {
                     onMouseEnter={() => setIsHoveringUI(true)}
                     onMouseLeave={() => setIsHoveringUI(false)}
                 >
-                    <div className="bg-white/[0.02] backdrop-blur-3xl border-t border-white/10 p-6 md:px-12">
+                    <div id="player-active-trigger" className="hidden" />
+                    <div className="bg-white/[0.02] backdrop-blur-3xl border-t border-white/10 p-4 md:px-8">
                         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-6 md:gap-8">
                             <div className="flex-1 min-w-0 flex items-center gap-4 text-center md:text-left">
                                 <div className="w-14 h-14 bg-gradient-to-br from-white/20 to-white/5 rounded-xl flex items-center justify-center border border-white/10 shrink-0">
