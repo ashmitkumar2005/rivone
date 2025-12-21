@@ -143,7 +143,7 @@ export default function PlayerPage() {
                         </h2>
                         <p className="text-zinc-500 text-sm mt-1">Select a track to stream</p>
                     </div>
-                    <Link href="/" className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:bg-white/10 transition-all text-sm font-medium">
+                    <Link href="/" className="px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all text-sm font-medium">
                         Exit
                     </Link>
                 </header>
@@ -163,7 +163,7 @@ export default function PlayerPage() {
                                     <p className={`font-bold text-lg transition-colors ${currentSong?.id === song.id ? "text-black" : "text-white"}`}>
                                         {song.title}
                                     </p>
-                                    <p className={`text-sm transition-colors ${currentSong?.id === song.id ? "text-black/60" : "text-zinc-400"}`}>
+                                    <p className={`text-sm transition-colors ${currentSong?.id === song.id ? "text-black/60" : "text-zinc-300"}`}>
                                         {song.artist}
                                     </p>
                                 </div>
@@ -196,7 +196,7 @@ export default function PlayerPage() {
                                 </div>
                                 <div className="min-w-0">
                                     <p className="font-bold text-lg truncate text-white">{currentSong.title}</p>
-                                    <p className="text-sm text-zinc-400 truncate">{currentSong.artist}</p>
+                                    <p className="text-sm text-zinc-300 truncate">{currentSong.artist}</p>
                                 </div>
                             </div>
 
@@ -214,7 +214,7 @@ export default function PlayerPage() {
                                     </button>
                                     <div className="flex-1 flex flex-col gap-1">
                                         <div className="flex items-center gap-3">
-                                            <span className="text-[10px] font-medium text-zinc-500 tabular-nums w-10 text-right">{formatTime(currentTime)}</span>
+                                            <span className="text-[10px] font-bold text-white tabular-nums w-10 text-right">{formatTime(currentTime)}</span>
                                             <input
                                                 type="range"
                                                 min="0"
@@ -222,16 +222,16 @@ export default function PlayerPage() {
                                                 step="0.01"
                                                 value={currentTime}
                                                 onChange={handleSeek}
-                                                className="flex-1 h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-white hover:accent-zinc-300 transition-all"
+                                                className="flex-1 h-1 bg-white/30 rounded-lg appearance-none cursor-pointer accent-white hover:bg-white/40 transition-all"
                                             />
-                                            <span className="text-[10px] font-medium text-zinc-500 tabular-nums w-10">{formatTime(duration)}</span>
+                                            <span className="text-[10px] font-bold text-white tabular-nums w-10">{formatTime(duration)}</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="flex items-center gap-3 w-32 shrink-0">
-                                <svg className="w-4 h-4 text-zinc-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" /></svg>
+                                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" /></svg>
                                 <input
                                     type="range"
                                     min="0"
@@ -239,7 +239,7 @@ export default function PlayerPage() {
                                     step="0.01"
                                     value={volume}
                                     onChange={handleVolume}
-                                    className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-white hover:accent-zinc-300 transition-all"
+                                    className="w-full h-1 bg-white/30 rounded-lg appearance-none cursor-pointer accent-white hover:bg-white/40 transition-all"
                                 />
                             </div>
                         </div>
