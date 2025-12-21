@@ -30,13 +30,6 @@ export function LiquidEffectAnimation() {
                 app.liquidPlane.uniforms.uFrequency = { value: defaultFreq };
                 app.liquidPlane.uniforms.uSpeed = { value: 0.02 };
                 app.setRain(false);
-                app.setBouncing(false); // Disable reflections at borders
-                
-                // Increase damping to make waves die out before hitting edges too hard
-                if (app.liquidPlane.uniforms.uDamping) {
-                  app.liquidPlane.uniforms.uDamping.value = 0.98;
-                }
-                
                 window.__liquidApp = app;
         
                 function animate() {
@@ -78,7 +71,7 @@ export function LiquidEffectAnimation() {
 
     return (
         <div
-            className={`fixed inset-0 m-0 w-full h-full touch-none overflow-hidden -z-10 brightness-[0.8] contrast-[1.5] transition-opacity duration-1000 ${isReady ? "opacity-100" : "opacity-0"}`}
+            className={`fixed inset-0 m-0 w-full h-full touch-none overflow-hidden -z-10 brightness-[0.8] contrast-[1.5] transition-opacity duration-1000 scale-110 ${isReady ? "opacity-100" : "opacity-0"}`}
             style={{ fontFamily: '"Montserrat", serif' }}
         >
             <canvas ref={canvasRef} id="liquid-canvas" className="fixed inset-0 w-full h-full" />
