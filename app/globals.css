@@ -75,11 +75,18 @@
 }
 
 body:has(#player-active-trigger) footer {
-  bottom: 0px;
-  z-index: 60;
-  margin-bottom: 120px;
-  /* Lift above the player bar */
-  transition: margin-bottom 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+  bottom: 28px !important;
+  left: auto !important;
+  right: 32px !important;
+  width: auto !important;
+  margin-bottom: 0 !important;
+  z-index: 70 !important;
+  justify-content: flex-end !important;
+  transition: all 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+footer {
+  transition: all 0.5s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 :root {
