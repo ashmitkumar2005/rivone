@@ -10,7 +10,7 @@ RIVONE is a high-fidelity, personal music streaming application built with Next.
 
 
 
-## ✨ Features
+##  Features
 
 -   **Immersive Visuals**:
     -   **Liquid Background**: Interactive, audio-reactive 3D liquid simulation using Three.js.
@@ -29,7 +29,7 @@ RIVONE is a high-fidelity, personal music streaming application built with Next.
     -   **Song Registry**: A verified list of your available tracks.
     -   **Persistent Deletion**: Delete songs locally, and they stay deleted (via `ignored.json`) even after re-syncing.
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 -   **Framework**: [Next.js 14+](https://nextjs.org/) (App Router)
 -   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
@@ -38,12 +38,12 @@ RIVONE is a high-fidelity, personal music streaming application built with Next.
 -   **Backend**: Next.js API Routes (Node.js runtime)
 -   **Database**: Local JSON based (`data/songs.json`) with Telegram as the file host.
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
 -   Node.js 18+
--   A Telegram Bot Token and Channel ID
+-   A Telegram Bot Token
 
 ### Installation
 
@@ -64,7 +64,6 @@ RIVONE is a high-fidelity, personal music streaming application built with Next.
     Create a `.env.local` file in the root directory and add your keys:
     ```env
     BOT_TOKEN=your_telegram_bot_token
-    CHANNEL_ID=your_telegram_channel_id
     ```
 
     *Note: The `BOT_TOKEN` is used to fetch file paths from Telegram's API.*
@@ -76,7 +75,7 @@ RIVONE is a high-fidelity, personal music streaming application built with Next.
 
     Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-## 📂 Project Structure
+##  Project Structure
 
 ```
 rivone/
@@ -96,7 +95,7 @@ rivone/
 └── lib/                  # Utilities (types, helpers)
 ```
 
-## 🤝 Credits
+##  Credits
 
 -   **Design & Development**: [Ashmit Kumar](https://ashmit-kumar.vercel.app)
 -   **Made with**: ❤️ and Next.js
