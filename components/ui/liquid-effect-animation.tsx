@@ -30,11 +30,12 @@ export function LiquidEffectAnimation() {
 
         function animate() {
           const intensity = window.__audioIntensity || 0;
-          const dynamicScale = defaultScale * (1 + intensity * 2.0); // Boost ripples with music
+          const dynamicScale = defaultScale * (1 + intensity * 6.0); // Stronger pulses
 
           if (window.__isHoveringUI) {
             app.liquidPlane.uniforms.displacementScale.value = 0;
           } else {
+            // Smoothly lerp towards the target scale or just set it
             app.liquidPlane.uniforms.displacementScale.value = dynamicScale;
           }
           window.__liquidAnimFrame = requestAnimationFrame(animate);

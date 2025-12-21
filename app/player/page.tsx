@@ -48,11 +48,12 @@ export default function PlayerPage() {
 
             const dataArray = new Uint8Array(analyser.frequencyBinCount);
             const analyze = () => {
-                if (analyserRef.current && isPlaying) {
+                if (analyserRef.current && !audio.paused) {
                     analyserRef.current.getByteFrequencyData(dataArray);
-                    const average = dataArray.reduce((p, c) => p + c, 0) / dataArray.length;
-                    // Normalized intensity (0.0 to 1.0 approx)
-                    window.__audioIntensity = Math.pow(average / 128, 2);
+                    // Focus more on bass frequencies (first 10 bins) for the pulse
+                    const bassSum = dataArray.slice(0, 10).reduce((a, b) => a + b, 0);
+                    const average = bassSum / 10;
+                    window.__audioIntensity = Math.pow(average / 150, 2);
                 } else {
                     window.__audioIntensity = 0;
                 }
