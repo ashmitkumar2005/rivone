@@ -129,7 +129,7 @@ export default function PlayerPage() {
             <div className={`absolute inset-0 z-0 transition-opacity duration-300 ${isHoveringUI ? "pointer-events-none" : "pointer-events-auto"}`}>
                 <LiquidEffectAnimation />
             </div>
-            <div className="absolute inset-0 bg-black/60 z-0 pointer-events-none" />
+            <div className="absolute inset-0 bg-black/30 z-0 pointer-events-none" />
 
             <div
                 className="relative z-10 w-full max-w-2xl bg-white/[0.05] backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-8 md:p-12 shadow-2xl flex flex-col max-h-[85vh]"
