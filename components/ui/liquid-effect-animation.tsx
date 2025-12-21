@@ -17,10 +17,14 @@ export function LiquidEffectAnimation() {
       if (canvas) {
         const app = LiquidBackground(canvas);
         app.loadImage('/sky.jpg');
+        const isMobile = window.innerWidth < 768;
+        const defaultScale = isMobile ? 0.05 : 0.4;
+
         app.liquidPlane.material.metalness = 0.9;
         app.liquidPlane.material.roughness = 0.1;
-        app.liquidPlane.uniforms.displacementScale.value = 1.5;
-        app.liquidPlane.uniforms.uFrequency = { value: 1.0 };
+        app.liquidPlane.uniforms.displacementScale.value = defaultScale;
+        app.liquidPlane.uniforms.uFrequency = { value: isMobile ? 0.2 : 0.5 };
+        app.liquidPlane.uniforms.uSpeed = { value: 0.02 };
         app.setRain(false);
         window.__liquidApp = app;
 
@@ -28,7 +32,7 @@ export function LiquidEffectAnimation() {
           if (window.__isHoveringUI) {
             app.liquidPlane.uniforms.displacementScale.value = 0;
           } else {
-            app.liquidPlane.uniforms.displacementScale.value = 1.5;
+            app.liquidPlane.uniforms.displacementScale.value = defaultScale;
           }
           window.__liquidAnimFrame = requestAnimationFrame(animate);
         }

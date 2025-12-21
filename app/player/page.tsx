@@ -81,14 +81,14 @@ export default function PlayerPage() {
     };
 
     return (
-        <main className="relative min-h-screen w-full flex items-center justify-center p-4 md:p-8 overflow-hidden bg-black">
-            <div className={`transition-opacity duration-300 ${isHoveringUI ? "pointer-events-none" : "pointer-events-auto"}`}>
+        <main className="relative h-full w-full flex items-center justify-center p-4 md:p-8 overflow-hidden">
+            <div className={`absolute inset-0 z-0 transition-opacity duration-300 ${isHoveringUI ? "pointer-events-none" : "pointer-events-auto"}`}>
                 <LiquidEffectAnimation />
             </div>
-            <div className="absolute inset-0 bg-black/85 z-0 pointer-events-none" />
+            <div className="absolute inset-0 bg-black/60 z-0 pointer-events-none" />
 
             <div
-                className="relative z-10 w-full max-w-2xl bg-black backdrop-blur-[150px] border border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl flex flex-col max-h-[85vh]"
+                className="relative z-10 w-full max-w-2xl bg-white/[0.05] backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-8 md:p-12 shadow-2xl flex flex-col max-h-[85vh]"
                 onMouseEnter={() => setIsHoveringUI(true)}
                 onMouseLeave={() => setIsHoveringUI(false)}
             >
@@ -110,8 +110,8 @@ export default function PlayerPage() {
                             key={song.id}
                             onClick={() => handleSongClick(song)}
                             className={`w-full text-left p-5 border rounded-2xl transition-all duration-300 group ${currentSong?.id === song.id
-                                ? "bg-white border-white scale-[1.02] shadow-lg shadow-white/10"
-                                : "bg-white/5 border-white/5 hover:border-white/20 hover:bg-white/10"
+                                ? "bg-white border-white scale-[1.02] shadow-lg shadow-white/20"
+                                : "bg-white/[0.05] border-white/10 hover:border-white/30 hover:bg-white/[0.08]"
                                 }`}
                         >
                             <div className="flex items-center justify-between">
@@ -144,7 +144,7 @@ export default function PlayerPage() {
                     onMouseEnter={() => setIsHoveringUI(true)}
                     onMouseLeave={() => setIsHoveringUI(false)}
                 >
-                    <div className="bg-black/95 backdrop-blur-[100px] border-t border-white/5 p-6 md:px-12">
+                    <div className="bg-white/[0.02] backdrop-blur-3xl border-t border-white/10 p-6 md:px-12">
                         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-6 md:gap-8">
                             <div className="flex-1 min-w-0 flex items-center gap-4 text-center md:text-left">
                                 <div className="w-14 h-14 bg-gradient-to-br from-white/20 to-white/5 rounded-xl flex items-center justify-center border border-white/10 shrink-0">
