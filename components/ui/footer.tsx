@@ -4,9 +4,14 @@ import { Outfit } from "next/font/google";
 
 const outfit = Outfit({ subsets: ["latin"] });
 
+import { usePathname } from "next/navigation";
+
 export function Footer() {
+    const pathname = usePathname();
+    const isPlayer = pathname === "/player";
+
     return (
-        <footer className={`fixed bottom-4 left-0 w-full flex justify-center z-10 pointer-events-none ${outfit.className}`}>
+        <footer className={`fixed bottom-4 left-0 w-full justify-center z-10 pointer-events-none ${outfit.className} ${isPlayer ? "hidden md:flex" : "flex"}`}>
             <a
                 href="https://ashmit-kumar.vercel.app"
                 target="_blank"

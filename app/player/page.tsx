@@ -205,30 +205,33 @@ export default function PlayerPage() {
                         </h2>
                         <p className="text-zinc-500 text-sm mt-1">Select a track to stream</p>
                     </div>
-                    <div className="flex flex-wrap justify-center items-center gap-3">
+                    <div className="flex flex-wrap justify-center items-center gap-3 md:gap-3">
                         <button
                             onClick={handleSync}
                             disabled={isSyncing}
-                            className={`px-4 py-2 rounded-full border transition-all text-sm font-medium flex items-center gap-2 ${isSyncing
+                            className={`p-3 md:px-4 md:py-2 rounded-full border transition-all text-sm font-medium flex items-center gap-2 ${isSyncing
                                 ? "bg-white/5 border-white/5 text-zinc-500 cursor-not-allowed"
                                 : "bg-white/10 border-white/20 text-white hover:bg-white/20"
                                 }`}
+                            aria-label="Sync"
                         >
-                            <svg className={`w-4 h-4 ${isSyncing ? "animate-spin" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className={`w-5 h-5 md:w-4 md:h-4 ${isSyncing ? "animate-spin" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
-                            {isSyncing ? "Syncing..." : "Sync"}
+                            <span className="hidden md:inline">{isSyncing ? "Syncing..." : "Sync"}</span>
                         </button>
-                        <Link href="/restore" className="px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all text-sm font-medium flex items-center gap-2">
-                            Trash
+                        <Link href="/restore" className="p-3 md:px-4 md:py-2 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all text-sm font-medium flex items-center gap-2" aria-label="Trash">
+                            <svg className="w-5 h-5 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            <span className="hidden md:inline">Trash</span>
                         </Link>
-                        <Link href="/" className="px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all text-sm font-medium">
-                            Exit
+                        <Link href="/" className="p-3 md:px-4 md:py-2 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all text-sm font-medium flex items-center gap-2" aria-label="Exit">
+                            <svg className="w-5 h-5 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                            <span className="hidden md:inline">Exit</span>
                         </Link>
                     </div>
                 </header>
 
-                <div className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar pb-40 md:pb-0">
                     {songs.map((song) => (
                         <button
                             key={song.id}
@@ -345,6 +348,23 @@ export default function PlayerPage() {
                                     className="w-full h-1 bg-white/30 rounded-lg appearance-none cursor-pointer accent-white hover:bg-white/40 transition-all"
                                 />
                             </div>
+                        </div>
+
+                        {/* Mobile Footer */}
+                        <div className="md:hidden w-full flex justify-center mt-4">
+                            <a
+                                href="https://ashmit-kumar.vercel.app"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 opacity-60"
+                            >
+                                <span className="text-[10px] text-gray-400 tracking-wide">Made with</span>
+                                <span className="text-red-500 text-xs">❤️</span>
+                                <span className="text-[10px] text-gray-400 tracking-wide">by</span>
+                                <span className="text-[10px] font-semibold text-zinc-300">
+                                    Ashmit Kumar
+                                </span>
+                            </a>
                         </div>
                     </div>
                 </div>
