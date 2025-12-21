@@ -125,7 +125,7 @@ export default function PlayerPage() {
     };
 
     return (
-        <main className="relative h-full w-full flex items-center justify-center p-4 md:p-8 overflow-hidden">
+        <main className="relative min-h-screen w-full flex items-center justify-center p-4 md:p-8 overflow-hidden">
             <div className={`absolute inset-0 z-0 transition-opacity duration-300 ${isHoveringUI ? "pointer-events-none" : "pointer-events-auto"}`}>
                 <LiquidEffectAnimation />
             </div>
