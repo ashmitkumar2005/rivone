@@ -21,19 +21,20 @@ export function LiquidEffectAnimation() {
                 const app = LiquidBackground(canvas);
                 app.loadImage('/sky.jpg');
                 const isMobile = window.innerWidth < 768;
-                const defaultScale = isMobile ? 0.05 : 0.4;
+                const defaultScale = isMobile ? 0.05 : 0.2; // Reduced from 0.4
+                const defaultFreq = isMobile ? 0.8 : 2.0; // Increased frequency for tightness
         
                 app.liquidPlane.material.metalness = 0.9;
                 app.liquidPlane.material.roughness = 0.1;
                 app.liquidPlane.uniforms.displacementScale.value = defaultScale;
-                app.liquidPlane.uniforms.uFrequency = { value: isMobile ? 0.2 : 0.5 };
+                app.liquidPlane.uniforms.uFrequency = { value: defaultFreq };
                 app.liquidPlane.uniforms.uSpeed = { value: 0.02 };
                 app.setRain(false);
                 window.__liquidApp = app;
         
                 function animate() {
                   const intensity = window.__audioIntensity || 0;
-                  const dynamicScale = defaultScale * (1 + intensity * 6.0); // Stronger pulses
+                  const dynamicScale = defaultScale * (1 + intensity * 4.0); // Balanced pulses with 4x multiplier
         
                   if (window.__isHoveringUI) {
                     app.liquidPlane.uniforms.displacementScale.value = 0;
