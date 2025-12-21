@@ -1,16 +1,10 @@
 import { NextResponse } from "next/server";
-import fs from "fs/promises";
-import path from "path";
-
-const SONGS_PATH = path.join(process.cwd(), "data", "songs.json");
-const IGNORED_PATH = path.join(process.cwd(), "data", "ignored.json");
+import { kv } from "@vercel/kv";
 
 export async function POST() {
     try {
         const token = process.env.BOT_TOKEN;
-        // In a real app, you might get the chat ID from env or a settings file
-        // For now, we'll try to get it from a potential env variable 
-        // or we can allow syncing from the bot's updates
+
         if (!token) {
             return NextResponse.json({ error: "BOT_TOKEN missing" }, { status: 500 });
         }
@@ -25,18 +19,10 @@ export async function POST() {
             return NextResponse.json({ error: "Telegram API error", details: data }, { status: 500 });
         }
 
-        // 2. Load ignored songs to filter them out
-        let ignoredIds: string[] = [];
-        try {
-            const ignoredContent = await fs.readFile(IGNORED_PATH, "utf-8");
-            const ignoredData = JSON.parse(ignoredContent);
-            ignoredIds = ignoredData.map((s: any) => s.id);
-        } catch (e) { }
-
         const newSongs: any[] = [];
         const seenFileIds = new Set();
 
-        // 3. Process updates
+        // 2. Process updates
         data.result.forEach((update: any) => {
             const message = update.message || update.channel_post;
             if (message && message.audio) {
@@ -48,7 +34,7 @@ export async function POST() {
                     audio.title.toLowerCase().replace(/[^a-z0-9]/g, "-") :
                     fileId.substring(0, 10);
 
-                if (!ignoredIds.includes(id) && !seenFileIds.has(fileId)) {
+                if (!seenFileIds.has(fileId)) {
                     newSongs.push({
                         id,
                         title: audio.title || "Unknown Title",
@@ -60,28 +46,32 @@ export async function POST() {
             }
         });
 
-        if (newSongs.length > 0) {
-            // Merge with existing songs (avoid duplicates)
-            let existingSongs = [];
-            try {
-                const songsContent = await fs.readFile(SONGS_PATH, "utf-8");
-                existingSongs = JSON.parse(songsContent);
-            } catch (e) { }
+        // 3. Merge with existing songs from KV
+        let existingSongs: any[] = await kv.get("songs") || [];
 
-            const mergedSongs = [...existingSongs];
-            newSongs.forEach(song => {
-                if (!mergedSongs.some(s => s.fileId === song.fileId)) {
-                    mergedSongs.push(song);
-                }
-            });
+        // Ensure existingSongs is an array (safeguard)
+        if (!Array.isArray(existingSongs)) {
+            existingSongs = [];
+        }
 
-            await fs.writeFile(SONGS_PATH, JSON.stringify(mergedSongs, null, 2));
+        const mergedSongs = [...existingSongs];
+        let addedCount = 0;
+
+        newSongs.forEach(song => {
+            if (!mergedSongs.some(s => s.fileId === song.fileId)) {
+                mergedSongs.push(song);
+                addedCount++;
+            }
+        });
+
+        if (addedCount > 0) {
+            await kv.set("songs", mergedSongs);
         }
 
         return NextResponse.json({
             success: true,
-            added: newSongs.length,
-            total: (await JSON.parse(await fs.readFile(SONGS_PATH, "utf-8"))).length
+            added: addedCount,
+            total: mergedSongs.length
         });
 
     } catch (error) {
