@@ -6,9 +6,9 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
     try {
-        const songs = await redis.get("songs");
-        return NextResponse.json(songs || []);
+        const deletedSongs = await redis.get("deleted_songs");
+        return NextResponse.json(deletedSongs || []);
     } catch (error) {
-        return NextResponse.json({ error: "Failed to load songs" }, { status: 500 });
+        return NextResponse.json({ error: "Failed to load deleted songs" }, { status: 500 });
     }
 }

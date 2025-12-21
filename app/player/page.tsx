@@ -212,6 +212,9 @@ export default function PlayerPage() {
                             </svg>
                             {isSyncing ? "Syncing..." : "Sync"}
                         </button>
+                        <Link href="/restore" className="px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all text-sm font-medium flex items-center gap-2">
+                            <span className="text-lg">🗑️</span>
+                        </Link>
                         <Link href="/" className="px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all text-sm font-medium">
                             Exit
                         </Link>
@@ -276,8 +279,16 @@ export default function PlayerPage() {
                     <div className="bg-white/[0.02] backdrop-blur-3xl border-t border-white/10 p-4 md:px-8">
                         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-6 md:gap-8">
                             <div className="flex-1 min-w-0 flex items-center gap-4 text-center md:text-left">
-                                <div className="w-14 h-14 bg-gradient-to-br from-white/20 to-white/5 rounded-xl flex items-center justify-center border border-white/10 shrink-0">
-                                    <span className="text-xl">🎵</span>
+                                <div className="w-14 h-14 bg-gradient-to-br from-white/20 to-white/5 rounded-xl flex items-center justify-center border border-white/10 shrink-0 overflow-hidden">
+                                    {currentSong.thumbId ? (
+                                        <img
+                                            src={`/api/stream?id=${currentSong.thumbId}`}
+                                            alt={currentSong.title}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <span className="text-xl">🎵</span>
+                                    )}
                                 </div>
                                 <div className="min-w-0">
                                     <p className="font-bold text-lg truncate text-white">{currentSong.title}</p>

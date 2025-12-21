@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { kv } from "@vercel/kv";
+import { redis } from "@/lib/redis";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
     try {
         const { id } = await request.json();
 
-        // Read current songs from KV
-        const songs: any[] = await kv.get("songs") || [];
+        // Read current songs from Redis
+        const songs: any[] = (await redis.get("songs")) as any[] || [];
 
         // Find song to delete
         const songToDelete = songs.find((s: any) => s.id === id);
@@ -17,8 +20,15 @@ export async function POST(request: NextRequest) {
         // Remove from songs
         const updatedSongs = songs.filter((s: any) => s.id !== id);
 
-        // Update KV
-        await kv.set("songs", updatedSongs);
+        // Add to deleted_songs
+        const deletedSongs: any[] = (await redis.get("deleted_songs")) as any[] || [];
+        if (!deletedSongs.some(s => s.id === id)) {
+            deletedSongs.push(songToDelete);
+        }
+
+        // Update Redis
+        await redis.set("songs", updatedSongs);
+        await redis.set("deleted_songs", deletedSongs);
 
         return NextResponse.json({ success: true });
     } catch (error) {

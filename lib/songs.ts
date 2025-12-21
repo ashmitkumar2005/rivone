@@ -3,6 +3,7 @@ export type Song = {
     title: string;
     artist: string;
     fileId: string;
+    thumbId?: string;
 };
 
 export const songs: Song[] = [
