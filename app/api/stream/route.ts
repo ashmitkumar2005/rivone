@@ -1,7 +1,3 @@
-console.log("ENV CHECK:", process.env.BOT_TOKEN)
-console.log("ENV LENGTH:", process.env.BOT_TOKEN?.length)
-
-
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
