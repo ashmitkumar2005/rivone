@@ -3,10 +3,9 @@
 **Private Music. Your Space.**
 
 RIVONE is a high-fidelity, personal music streaming application built with Next.js. It features a stunning, immersive UI with liquid background effects, seamless Telegram-based audio streaming, and a glassmorphism aesthetic.
-<img width="1916" height="1008" alt="image" src="https://github.com/user-attachments/assets/c3c5b5be-35e4-4eb1-b81f-14b24cd05baf" />
-<img width="1909" height="1008" alt="image" src="https://github.com/user-attachments/assets/36d4a4df-884d-48c8-80f3-b00dc6a70f57" />
-<img width="1912" height="1013" alt="image" src="https://github.com/user-attachments/assets/707b9091-9a44-4bd1-904b-7f142cf6ec31" />
-
+<img width="1920" height="1080" alt="Screenshot_20251222_225809" src="https://github.com/user-attachments/assets/d75d9f89-cd1b-4462-88e0-05d7d3ba9153" />
+<img width="1920" height="1080" alt="Screenshot_20251222_225842" src="https://github.com/user-attachments/assets/a0e806cc-52e9-4cea-98f1-3bc02afa62e7" />
+<img width="1920" height="1080" alt="Screenshot_20251222_225922" src="https://github.com/user-attachments/assets/7509eb2f-1165-484d-a76a-016a03d8824b" />
 
 
 
