@@ -359,9 +359,6 @@ export default function PlayerPage() {
                                             {song.artist}
                                         </p>
                                     </div>
-                                    <div className="text-xs md:text-sm text-zinc-600 tabular-nums">
-                                        {formatTime(song.duration || 0)}
-                                    </div>
                                 </div>
                             </button>
                         ))}
@@ -379,8 +376,8 @@ export default function PlayerPage() {
                 >
                     <div id="player-active-trigger" className="hidden" />
                     <div className="bg-black/30 backdrop-blur-2xl border border-white/10 p-2 md:px-6 md:py-3 rounded-[2.5rem] shadow-2xl ring-1 ring-white/5">
-                        <div className="flex flex-row items-center gap-3 md:gap-4 w-full justify-between">
-                            <div className="flex-none md:flex-1 min-w-0 flex items-center gap-3 md:gap-4 text-left pl-[14px] md:pl-0">
+                        <div className="flex flex-row items-center gap-2 md:gap-4 w-full justify-between">
+                            <div className="flex-none md:flex-1 min-w-0 flex items-center gap-2 md:gap-4 text-left pl-[14px] md:pl-0">
                                 <div className="w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-white/20 to-white/5 rounded-2xl md:rounded-xl flex items-center justify-center border border-white/10 shrink-0 overflow-hidden">
                                     {currentSong.thumbId ? (
                                         <img
@@ -398,10 +395,10 @@ export default function PlayerPage() {
                                 </div>
                             </div>
 
-                            <div className="flex flex-row items-center gap-3 flex-1 min-w-0 md:flex-none md:w-[600px]">
-                                <div className="flex flex-1 flex-col gap-1 w-full md:max-w-none order-1 md:order-2">
-                                    <div className="flex items-center gap-2 md:gap-3">
-                                        <span className="text-[10px] font-bold text-white tabular-nums w-10 text-right">{formatTime(currentTime)}</span>
+                            <div className="flex flex-row items-center gap-1 flex-1 min-w-0 md:flex-none md:w-[600px]">
+                                <div className="flex flex-1 flex-col gap-1 md:max-w-none order-1 md:order-2">
+                                    <div className="flex items-center gap-[2px] md:gap-3">
+                                        <span className="text-[6px] font-bold text-white tabular-nums w-[14px] text-right">{formatTime(currentTime)}</span>
                                         <input
                                             type="range"
                                             min="0"
@@ -409,16 +406,16 @@ export default function PlayerPage() {
                                             step="0.01"
                                             value={currentTime}
                                             onChange={handleSeek}
-                                            className="flex-1 h-1 bg-white/30 rounded-lg appearance-none cursor-pointer accent-white hover:bg-white/40 transition-all"
+                                            className="flex-1 min-w-[5px] h-1 bg-white/30 rounded-lg appearance-none cursor-pointer accent-white hover:bg-white/40 transition-all"
                                         />
-                                        <span className="text-[10px] font-bold text-white/50 tabular-nums w-10">{formatTime(duration)}</span>
+                                        <span className="text-[6px] font-bold text-white/50 tabular-nums w-[14px]">{formatTime(duration)}</span>
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-3 md:gap-6 w-auto justify-end md:justify-center order-2 md:order-1">
+                                <div className="flex items-center gap-1 sm:gap-2 md:gap-6 w-auto justify-end md:justify-center order-2 md:order-1">
                                     <button
                                         onClick={toggleMute}
-                                        className="md:hidden p-2 rounded-full transition-all hover:bg-white/10 text-white"
+                                        className="md:hidden p-1 rounded-full transition-all hover:bg-white/10 text-white"
                                     >
                                         {volume === 0 ? (
                                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" /></svg>
@@ -429,7 +426,7 @@ export default function PlayerPage() {
 
                                     <button
                                         onClick={() => setLoopMode(prev => prev === 'off' ? 'playlist' : prev === 'playlist' ? 'song' : 'off')}
-                                        className={`p-2 rounded-full transition-all hover:bg-white/10 ${loopMode !== 'off' ? 'text-white' : 'text-zinc-500'
+                                        className={`p-1 rounded-full transition-all hover:bg-white/10 ${loopMode !== 'off' ? 'text-white' : 'text-zinc-500'
                                             }`}
                                     >
                                         <div className="relative">
@@ -444,14 +441,14 @@ export default function PlayerPage() {
 
                                     <button
                                         onClick={playPrevious}
-                                        className="p-2 text-white/70 hover:text-white hover:scale-110 active:scale-95 transition-all"
+                                        className="p-1 text-white/70 hover:text-white hover:scale-110 active:scale-95 transition-all"
                                     >
-                                        <svg className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" /></svg>
+                                        <svg className="w-4 h-4 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" /></svg>
                                     </button>
 
                                     <button
                                         onClick={togglePlay}
-                                        className="p-2 md:p-4 bg-white text-black rounded-full hover:scale-105 active:scale-95 transition-all shadow-xl shadow-white/10 shrink-0"
+                                        className="p-1.5 md:p-4 bg-white text-black rounded-full hover:scale-105 active:scale-95 transition-all shadow-xl shadow-white/10 shrink-0"
                                     >
                                         {isPlaying ? (
                                             <svg className="w-4 h-4 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
@@ -462,9 +459,9 @@ export default function PlayerPage() {
 
                                     <button
                                         onClick={playNext}
-                                        className="p-2 text-white/70 hover:text-white hover:scale-110 active:scale-95 transition-all"
+                                        className="p-1 text-white/70 hover:text-white hover:scale-110 active:scale-95 transition-all"
                                     >
-                                        <svg className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
+                                        <svg className="w-4 h-4 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
                                     </button>
                                 </div>
                             </div>
