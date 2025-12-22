@@ -1,7 +1,6 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { LiquidEffectAnimation } from "@/components/ui/liquid-effect-animation";
 
 export function BackgroundManager() {
     const pathname = usePathname();
@@ -13,7 +12,11 @@ export function BackgroundManager() {
 
     return (
         <div className="fixed inset-0 z-[-1]">
-            <LiquidEffectAnimation />
+            <img
+                src="/sky.jpg"
+                alt="Background"
+                className="w-full h-full object-cover brightness-[0.8] contrast-[1.5] scale-110"
+            />
         </div>
     );
 }

@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RIVONE",
+  title: "Rivone",
   description: "Private Music. Your Space.",
 };
 

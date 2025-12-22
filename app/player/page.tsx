@@ -398,7 +398,7 @@ export default function PlayerPage() {
                             <div className="flex flex-row items-center gap-1 flex-1 min-w-0 md:flex-none md:w-[600px]">
                                 <div className="flex flex-1 flex-col gap-1 md:max-w-none order-1 md:order-2">
                                     <div className="flex items-center gap-[2px] md:gap-3">
-                                        <span className="text-[6px] font-bold text-white tabular-nums w-[14px] text-right">{formatTime(currentTime)}</span>
+                                        <span className="text-[10px] font-bold text-white tabular-nums w-[24px] text-right">{formatTime(currentTime)}</span>
                                         <input
                                             type="range"
                                             min="0"
@@ -406,9 +406,9 @@ export default function PlayerPage() {
                                             step="0.01"
                                             value={currentTime}
                                             onChange={handleSeek}
-                                            className="flex-1 min-w-[5px] h-1 bg-white/30 rounded-lg appearance-none cursor-pointer accent-white hover:bg-white/40 transition-all"
+                                            className="flex-1 min-w-[15px] h-1 bg-white/30 rounded-lg appearance-none cursor-pointer accent-white hover:bg-white/40 transition-all"
                                         />
-                                        <span className="text-[6px] font-bold text-white/50 tabular-nums w-[14px]">{formatTime(duration)}</span>
+                                        <span className="text-[10px] font-bold text-white/50 tabular-nums w-[24px]">{formatTime(duration)}</span>
                                     </div>
                                 </div>
 

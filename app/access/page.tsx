@@ -1,6 +1,32 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function AccessPage() {
+    const [key, setKey] = useState("");
+    const [error, setError] = useState(false);
+    const router = useRouter();
+
+    const handleUnlock = () => {
+        if (key === "2903") {
+            // Set cookie for 30 days
+            document.cookie = "rivon-access=true; path=/; max-age=2592000; SameSite=Strict";
+            router.push("/player");
+        } else {
+            setError(true);
+            setKey("");
+            setTimeout(() => setError(false), 2000);
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter") {
+            handleUnlock();
+        }
+    };
+
     return (
         <main className="flex min-h-screen flex-col items-center justify-center p-8 animate-fade-in-up">
             <div className="w-full max-w-sm space-y-8">
@@ -12,15 +38,28 @@ export default function AccessPage() {
                 <div className="space-y-4">
                     <input
                         type="password"
+                        value={key}
+                        onChange={(e) => {
+                            setKey(e.target.value);
+                            setError(false);
+                        }}
+                        onKeyDown={handleKeyDown}
                         placeholder="••••••••"
-                        className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-white/10 transition-all"
+                        className={`w-full px-4 py-3 bg-zinc-900 border rounded-xl text-white placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-white/10 transition-all ${error ? "border-red-500/50 shake" : "border-zinc-800"
+                            }`}
+                        autoFocus
                     />
-                    <Link
-                        href="/player"
-                        className="block w-full py-3 bg-zinc-100 text-black text-center font-semibold rounded-xl hover:bg-white transition-colors"
+                    <button
+                        onClick={handleUnlock}
+                        className="block w-full py-3 bg-zinc-100 text-black text-center font-semibold rounded-xl hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all"
                     >
                         Unlock Space
-                    </Link>
+                    </button>
+                    {error && (
+                        <p className="text-red-400 text-xs text-center animate-fade-in">
+                            Invalid access key
+                        </p>
+                    )}
                 </div>
 
                 <div className="text-center">
@@ -29,6 +68,17 @@ export default function AccessPage() {
                     </Link>
                 </div>
             </div>
+
+            <style jsx global>{`
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    25% { transform: translateX(-4px); }
+                    75% { transform: translateX(4px); }
+                }
+                .shake {
+                    animation: shake 0.2s ease-in-out 0s 2;
+                }
+            `}</style>
         </main>
     );
 }
