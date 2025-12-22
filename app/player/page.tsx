@@ -281,13 +281,13 @@ export default function PlayerPage() {
 
             {currentSong && (
                 <div
-                    className="fixed bottom-0 left-0 right-0 z-50 animate-in fade-in slide-in-from-bottom-5 duration-500"
+                    className="fixed bottom-7 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-7xl animate-in fade-in slide-in-from-bottom-5 duration-500"
                     onMouseEnter={() => setIsHoveringUI(true)}
                     onMouseLeave={() => setIsHoveringUI(false)}
                 >
                     <div id="player-active-trigger" className="hidden" />
-                    <div className="bg-white/[0.02] backdrop-blur-3xl border-t border-white/10 p-4 md:px-8">
-                        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-6 md:gap-8">
+                    <div className="bg-black/60 backdrop-blur-2xl border border-white/10 p-4 md:px-6 md:py-4 rounded-[2.5rem] shadow-2xl ring-1 ring-white/5">
+                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
                             <div className="flex-1 min-w-0 flex items-center gap-4 text-center md:text-left">
                                 <div className="w-14 h-14 bg-gradient-to-br from-white/20 to-white/5 rounded-xl flex items-center justify-center border border-white/10 shrink-0 overflow-hidden">
                                     {currentSong.thumbId ? (
@@ -350,22 +350,6 @@ export default function PlayerPage() {
                             </div>
                         </div>
 
-                        {/* Mobile Footer */}
-                        <div className="md:hidden w-full flex justify-center mt-4">
-                            <a
-                                href="https://ashmit-kumar.vercel.app"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1.5 opacity-60"
-                            >
-                                <span className="text-[10px] text-gray-400 tracking-wide">Made with</span>
-                                <span className="text-red-500 text-xs">❤️</span>
-                                <span className="text-[10px] text-gray-400 tracking-wide">by</span>
-                                <span className="text-[10px] font-semibold text-zinc-300">
-                                    Ashmit Kumar
-                                </span>
-                            </a>
-                        </div>
                     </div>
                 </div>
             )}
