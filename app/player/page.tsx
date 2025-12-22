@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { songs as initialSongs, Song } from "@/lib/songs";
+import Lenis from "lenis";
 
 declare global {
     interface Window {
@@ -12,7 +13,32 @@ declare global {
 
 export default function PlayerPage() {
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const listRef = useRef<HTMLDivElement>(null);
     const [songs, setSongs] = useState<Song[]>([]);
+
+    useEffect(() => {
+        if (!listRef.current) return;
+        const lenis = new Lenis({
+            wrapper: listRef.current,
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            orientation: "vertical",
+            gestureOrientation: "vertical",
+            smoothWheel: true,
+            wheelMultiplier: 1,
+            touchMultiplier: 2,
+        });
+
+        function raf(time: number) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        return () => {
+            lenis.destroy();
+        };
+    }, [songs]);
     const [currentSong, setCurrentSong] = useState<Song | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
@@ -262,7 +288,7 @@ export default function PlayerPage() {
                 <header className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-0 mb-10">
                     <div className="text-center md:text-left">
                         <h2 className="text-3xl font-bold bg-gradient-to-r from-white to-white/50 bg-clip-text text-transparent">
-                            Song Registry
+                            Songs Library
                         </h2>
                         <p className="text-zinc-500 text-sm mt-1">Select a track to stream</p>
                     </div>
@@ -292,53 +318,58 @@ export default function PlayerPage() {
                     </div>
                 </header>
 
-                <div className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar pb-40 md:pb-0">
-                    {songs.map((song) => (
-                        <button
-                            key={song.id}
-                            onClick={() => handleSongClick(song)}
-                            className={`w-full text-left p-3 md:p-5 border rounded-[2rem] md:rounded-2xl transition-all duration-300 group ${currentSong?.id === song.id
-                                ? "bg-white border-white scale-[1.02] shadow-lg shadow-white/20"
-                                : "bg-white/[0.05] border-white/10 hover:border-white/30 hover:bg-white/[0.08]"
-                                }`}
-                        >
-                            <div className="flex items-center justify-between">
-                                <div className="min-w-0 flex-1 pr-4">
-                                    <p className={`font-bold text-lg transition-colors truncate ${currentSong?.id === song.id ? "text-black" : "text-white"}`}>
-                                        {song.title}
-                                    </p>
-                                    <p className={`text-sm transition-colors truncate ${currentSong?.id === song.id ? "text-black/60" : "text-zinc-300"}`}>
-                                        {song.artist}
-                                    </p>
+                <div
+                    ref={listRef}
+                    className="flex-1 overflow-y-auto pr-4 custom-scrollbar pb-40 md:pb-0"
+                    onWheel={(e) => e.stopPropagation()}
+                >
+                    <div className="space-y-3">
+                        {songs.map((song) => (
+                            <button
+                                key={song.id}
+                                onClick={() => handleSongClick(song)}
+                                className={`w-full text-left p-2 md:p-3 border rounded-[2rem] md:rounded-2xl transition-all duration-300 group ${currentSong?.id === song.id
+                                    ? "bg-white/10 border-white/20 shadow-lg"
+                                    : "border-transparent hover:bg-white/5 hover:border-white/10"
+                                    }`}
+                            >
+                                <div className="flex items-center gap-3 md:gap-4">
+                                    <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden flex-shrink-0 bg-white/5">
+                                        {song.thumbId ? (
+                                            <img
+                                                src={`/api/stream?id=${song.thumbId}`}
+                                                alt={song.title}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-lg">🎵</div>
+                                        )}
+                                        {currentSong?.id === song.id && (
+                                            <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                                                <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full animate-pulse" />
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className={`font-medium text-sm md:text-base truncate transition-colors ${currentSong?.id === song.id ? "text-white" : "text-zinc-300 group-hover:text-white"
+                                            }`}>
+                                            {song.title}
+                                        </p>
+                                        <p className="text-xs md:text-sm text-zinc-500 truncate group-hover:text-zinc-400">
+                                            {song.artist}
+                                        </p>
+                                    </div>
+                                    <div className="text-xs md:text-sm text-zinc-600 tabular-nums">
+                                        {formatTime(song.duration || 0)}
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-4">
-                                    {currentSong?.id === song.id && (
-                                        <div className="flex gap-1 items-end h-4">
-                                            <div className="w-1 bg-black animate-[music-bar_0.6s_ease-in-out_infinite]" />
-                                            <div className="w-1 bg-black animate-[music-bar_0.8s_ease-in-out_infinite_0.1s]" />
-                                            <div className="w-1 bg-black animate-[music-bar_0.7s_ease-in-out_infinite_0.2s]" />
-                                        </div>
-                                    )}
-                                    <button
-                                        onClick={(e) => handleDeleteSong(e, song.id)}
-                                        className={`p-2 rounded-xl transition-all ${currentSong?.id === song.id
-                                            ? "text-black/40 hover:text-black hover:bg-black/5"
-                                            : "text-white/20 hover:text-red-400 hover:bg-white/10"
-                                            }`}
-                                        title="Delete song"
-                                    >
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                        </button>
-                    ))}
+                            </button>
+                        ))}
+                    </div>
                 </div>
-            </div>
 
-            <audio ref={audioRef} />
+                <audio ref={audioRef} />
+            </div>
 
             {currentSong && (
                 <div

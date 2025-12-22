@@ -4,6 +4,7 @@ export type Song = {
     artist: string;
     fileId: string;
     thumbId?: string;
+    duration?: number;
 };
 
 export const songs: Song[] = [
