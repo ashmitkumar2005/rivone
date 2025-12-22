@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { songs as initialSongs, Song } from "@/lib/songs";
 
@@ -20,6 +20,8 @@ export default function PlayerPage() {
     const [volume, setVolume] = useState(1);
     const [isHoveringUI, setIsHoveringUI] = useState(false);
     const [isSyncing, setIsSyncing] = useState(false);
+    const [loopMode, setLoopMode] = useState<'off' | 'playlist' | 'song'>('off');
+    const lastVolumeRef = useRef(1); // Track volume before mute
     const analyserRef = useRef<AnalyserNode | null>(null);
     const gainNodeRef = useRef<GainNode | null>(null);
     const audioContextRef = useRef<AudioContext | null>(null);
@@ -83,6 +85,50 @@ export default function PlayerPage() {
         }
     }, [isHoveringUI]);
 
+    const handleSongClick = useCallback((song: Song) => {
+        setCurrentSong(song);
+        if (audioRef.current) {
+            audioRef.current.src = `/api/stream?id=${song.fileId}`;
+            audioRef.current.play();
+            setIsPlaying(true);
+        }
+    }, []); // Dependencies: setCurrentSong, setIsPlaying (React guarantees stability for setState functions)
+
+    const playPrevious = useCallback(() => {
+        if (!currentSong || songs.length === 0) return;
+        if (audioRef.current && audioRef.current.currentTime > 3) {
+            audioRef.current.currentTime = 0;
+            return;
+        }
+
+        const currentIndex = songs.findIndex(s => s.id === currentSong.id);
+        let prevIndex = currentIndex - 1;
+
+        if (prevIndex < 0) {
+            prevIndex = songs.length - 1;
+        }
+
+        handleSongClick(songs[prevIndex]);
+    }, [currentSong, songs, handleSongClick]);
+
+    const playNext = useCallback(() => {
+        if (!currentSong || songs.length === 0) return;
+
+        const currentIndex = songs.findIndex(s => s.id === currentSong.id);
+        let nextIndex = currentIndex + 1;
+
+        if (nextIndex >= songs.length) {
+            if (loopMode === 'playlist') {
+                nextIndex = 0; // Loop back to start
+            } else {
+                setIsPlaying(false); // Stop if not looping playlist
+                return;
+            }
+        }
+
+        handleSongClick(songs[nextIndex]);
+    }, [currentSong, songs, loopMode, handleSongClick]);
+
     useEffect(() => {
         const audio = audioRef.current;
         if (!audio) return;
@@ -127,7 +173,16 @@ export default function PlayerPage() {
 
         const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
         const handleLoadedMetadata = () => setDuration(audio.duration);
-        const handleEnded = () => setIsPlaying(false);
+        const handleEnded = () => {
+            if (loopMode === 'song') {
+                audio.currentTime = 0;
+                audio.play();
+            } else if (loopMode === 'playlist') {
+                playNext();
+            } else {
+                setIsPlaying(false);
+            }
+        };
 
         audio.addEventListener("timeupdate", handleTimeUpdate);
         audio.addEventListener("loadedmetadata", handleLoadedMetadata);
@@ -138,16 +193,7 @@ export default function PlayerPage() {
             audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
             audio.removeEventListener("ended", handleEnded);
         };
-    }, [isPlaying]);
-
-    const handleSongClick = (song: Song) => {
-        setCurrentSong(song);
-        if (audioRef.current) {
-            audioRef.current.src = `/api/stream?id=${song.fileId}`;
-            audioRef.current.play();
-            setIsPlaying(true);
-        }
-    };
+    }, [isPlaying, loopMode, playNext, volume]); // Added playNext and volume to dependencies
 
     const togglePlay = () => {
         if (!audioRef.current || !currentSong) return;
@@ -180,6 +226,21 @@ export default function PlayerPage() {
             audioRef.current.volume = 1;
             gainNodeRef.current.gain.value = vol;
             setVolume(vol);
+            if (vol > 0) lastVolumeRef.current = vol; // Update last volume if not muted
+        }
+    };
+
+    const toggleMute = () => {
+        if (!audioRef.current || !gainNodeRef.current) return;
+
+        if (volume > 0) {
+            lastVolumeRef.current = volume;
+            gainNodeRef.current.gain.value = 0;
+            setVolume(0);
+        } else {
+            const newVol = lastVolumeRef.current || 1;
+            gainNodeRef.current.gain.value = newVol;
+            setVolume(newVol);
         }
     };
 
@@ -194,7 +255,7 @@ export default function PlayerPage() {
             <div className="absolute inset-0 bg-black/30 z-0 pointer-events-none animate-fade-in" />
 
             <div
-                className="relative z-10 w-full max-w-2xl bg-white/[0.05] backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-8 md:p-12 shadow-2xl flex flex-col max-h-[85vh] animate-fade-in-up"
+                className="relative z-10 w-full max-w-2xl bg-white/[0.05] backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-8 md:p-12 shadow-2xl flex flex-col max-h-[65vh] md:max-h-[75vh] animate-fade-in-up"
                 onMouseEnter={() => setIsHoveringUI(true)}
                 onMouseLeave={() => setIsHoveringUI(false)}
             >
@@ -236,7 +297,7 @@ export default function PlayerPage() {
                         <button
                             key={song.id}
                             onClick={() => handleSongClick(song)}
-                            className={`w-full text-left p-5 border rounded-2xl transition-all duration-300 group ${currentSong?.id === song.id
+                            className={`w-full text-left p-3 md:p-5 border rounded-[2rem] md:rounded-2xl transition-all duration-300 group ${currentSong?.id === song.id
                                 ? "bg-white border-white scale-[1.02] shadow-lg shadow-white/20"
                                 : "bg-white/[0.05] border-white/10 hover:border-white/30 hover:bg-white/[0.08]"
                                 }`}
@@ -286,10 +347,10 @@ export default function PlayerPage() {
                     onMouseLeave={() => setIsHoveringUI(false)}
                 >
                     <div id="player-active-trigger" className="hidden" />
-                    <div className="bg-black/60 backdrop-blur-2xl border border-white/10 p-4 md:px-6 md:py-4 rounded-[2.5rem] shadow-2xl ring-1 ring-white/5">
-                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
-                            <div className="flex-1 min-w-0 flex items-center gap-4 text-center md:text-left">
-                                <div className="w-14 h-14 bg-gradient-to-br from-white/20 to-white/5 rounded-xl flex items-center justify-center border border-white/10 shrink-0 overflow-hidden">
+                    <div className="bg-black/30 backdrop-blur-2xl border border-white/10 p-2 md:px-6 md:py-3 rounded-[2.5rem] shadow-2xl ring-1 ring-white/5">
+                        <div className="flex flex-row items-center gap-3 md:gap-4 w-full justify-between">
+                            <div className="flex-none md:flex-1 min-w-0 flex items-center gap-3 md:gap-4 text-left pl-[14px] md:pl-0">
+                                <div className="w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-white/20 to-white/5 rounded-2xl md:rounded-xl flex items-center justify-center border border-white/10 shrink-0 overflow-hidden">
                                     {currentSong.thumbId ? (
                                         <img
                                             src={`/api/stream?id=${currentSong.thumbId}`}
@@ -297,47 +358,94 @@ export default function PlayerPage() {
                                             className="w-full h-full object-cover"
                                         />
                                     ) : (
-                                        <span className="text-xl">🎵</span>
+                                        <span className="text-base md:text-xl">🎵</span>
                                     )}
                                 </div>
-                                <div className="min-w-0">
-                                    <p className="font-bold text-lg truncate text-white">{currentSong.title}</p>
-                                    <p className="text-sm text-zinc-300 truncate">{currentSong.artist}</p>
+                                <div className="min-w-0 hidden md:block">
+                                    <p className="font-bold text-sm md:text-lg truncate text-white">{currentSong.title}</p>
+                                    <p className="text-xs md:text-sm text-zinc-300 truncate">{currentSong.artist}</p>
                                 </div>
                             </div>
 
-                            <div className="flex flex-col items-center gap-3 w-full md:w-[450px]">
-                                <div className="flex items-center gap-6 w-full">
-                                    <button
-                                        onClick={togglePlay}
-                                        className="p-4 bg-white text-black rounded-full hover:scale-105 active:scale-95 transition-all shadow-xl shadow-white/10 shrink-0"
-                                    >
-                                        {isPlaying ? (
-                                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
-                                        ) : (
-                                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
-                                        )}
-                                    </button>
-                                    <div className="flex-1 flex flex-col gap-1">
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-[10px] font-bold text-white tabular-nums w-10 text-right">{formatTime(currentTime)}</span>
-                                            <input
-                                                type="range"
-                                                min="0"
-                                                max={duration || 0}
-                                                step="0.01"
-                                                value={currentTime}
-                                                onChange={handleSeek}
-                                                className="flex-1 h-1 bg-white/30 rounded-lg appearance-none cursor-pointer accent-white hover:bg-white/40 transition-all"
-                                            />
-                                            <span className="text-[10px] font-bold text-white tabular-nums w-10">{formatTime(duration)}</span>
-                                        </div>
+                            <div className="flex flex-row items-center gap-3 flex-1 min-w-0 md:flex-none md:w-[600px]">
+                                <div className="flex flex-1 flex-col gap-1 w-full md:max-w-none order-1 md:order-2">
+                                    <div className="flex items-center gap-2 md:gap-3">
+                                        <span className="text-[10px] font-bold text-white tabular-nums w-10 text-right">{formatTime(currentTime)}</span>
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max={duration || 0}
+                                            step="0.01"
+                                            value={currentTime}
+                                            onChange={handleSeek}
+                                            className="flex-1 h-1 bg-white/30 rounded-lg appearance-none cursor-pointer accent-white hover:bg-white/40 transition-all"
+                                        />
+                                        <span className="text-[10px] font-bold text-white/50 tabular-nums w-10">{formatTime(duration)}</span>
                                     </div>
                                 </div>
+
+                                <div className="flex items-center gap-3 md:gap-6 w-auto justify-end md:justify-center order-2 md:order-1">
+                                    <button
+                                        onClick={toggleMute}
+                                        className="md:hidden p-2 rounded-full transition-all hover:bg-white/10 text-white"
+                                    >
+                                        {volume === 0 ? (
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" /></svg>
+                                        ) : (
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+                                        )}
+                                    </button>
+
+                                    <button
+                                        onClick={() => setLoopMode(prev => prev === 'off' ? 'playlist' : prev === 'playlist' ? 'song' : 'off')}
+                                        className={`p-2 rounded-full transition-all hover:bg-white/10 ${loopMode !== 'off' ? 'text-white' : 'text-zinc-500'
+                                            }`}
+                                    >
+                                        <div className="relative">
+                                            <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                            </svg>
+                                            {loopMode === 'song' && (
+                                                <span className="absolute -top-1 -right-1 text-[8px] font-bold bg-white text-black rounded-full w-3 h-3 flex items-center justify-center">1</span>
+                                            )}
+                                        </div>
+                                    </button>
+
+                                    <button
+                                        onClick={playPrevious}
+                                        className="p-2 text-white/70 hover:text-white hover:scale-110 active:scale-95 transition-all"
+                                    >
+                                        <svg className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" /></svg>
+                                    </button>
+
+                                    <button
+                                        onClick={togglePlay}
+                                        className="p-2 md:p-4 bg-white text-black rounded-full hover:scale-105 active:scale-95 transition-all shadow-xl shadow-white/10 shrink-0"
+                                    >
+                                        {isPlaying ? (
+                                            <svg className="w-4 h-4 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+                                        ) : (
+                                            <svg className="w-4 h-4 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                                        )}
+                                    </button>
+
+                                    <button
+                                        onClick={playNext}
+                                        className="p-2 text-white/70 hover:text-white hover:scale-110 active:scale-95 transition-all"
+                                    >
+                                        <svg className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
+                                    </button>
+                                </div>
                             </div>
 
-                            <div className="flex items-center gap-3 w-32 shrink-0">
-                                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" /></svg>
+                            <div className="hidden md:flex flex-1 min-w-0 justify-end items-center gap-3">
+                                <button onClick={toggleMute} className="text-white hover:text-white/80 transition-colors">
+                                    {volume === 0 ? (
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" /></svg>
+                                    ) : (
+                                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" /></svg>
+                                    )}
+                                </button>
                                 <input
                                     type="range"
                                     min="0"
@@ -345,7 +453,7 @@ export default function PlayerPage() {
                                     step="0.01"
                                     value={volume}
                                     onChange={handleVolume}
-                                    className="w-full h-1 bg-white/30 rounded-lg appearance-none cursor-pointer accent-white hover:bg-white/40 transition-all"
+                                    className="w-full h-1 bg-white/30 rounded-lg appearance-none cursor-pointer accent-white hover:bg-white/40 transition-all max-w-[8rem]"
                                 />
                             </div>
                         </div>
