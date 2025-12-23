@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
-export default function ExpandableLogo({ size = 30, isMobile: externalIsMobile }: { size?: number; isMobile?: boolean }) {
+export default function ExpandableLogo({ size = 30, isMobile: externalIsMobile, expandedWidth }: { size?: number; isMobile?: boolean; expandedWidth?: number }) {
   // Increase the visible logo by 20% compared to the provided `size` prop
   const effectiveSize = Math.round(size * 0.8);
   const [hovered, setHovered] = useState(false);
@@ -36,8 +36,20 @@ export default function ExpandableLogo({ size = 30, isMobile: externalIsMobile }
 
   // width needed for the text area when expanded (including spacing)
   const spacingBetween = 8;
-  const textRightPadding = 20;
-  const expandedTextWidth = spacingBetween + labelWidth + textRightPadding;
+  const baseRightPadding = 20;
+
+  // If expandedWidth is provided, calculate the necessary right padding to achieve it
+  // Total Width = 50 (logo slot) + expandedTextWidth
+  // expandedTextWidth = spacingBetween + labelWidth + textRightPadding
+  // So: textRightPadding = (expandedWidth - 50) - spacingBetween - labelWidth
+
+  const textRightPadding = expandedWidth
+    ? Math.max(0, (expandedWidth - 50) - spacingBetween - labelWidth)
+    : baseRightPadding;
+
+  const expandedTextWidth = expandedWidth
+    ? expandedWidth - 50
+    : spacingBetween + labelWidth + textRightPadding;
 
   const baseGlow = "0 0 0 1px rgba(255, 255, 255, 0.1)";
   const hoverGlow = "0 0 0 1px rgba(255, 255, 255, 0.2), 0 0 10px rgba(255,255,255,0.1)";
@@ -56,7 +68,7 @@ export default function ExpandableLogo({ size = 30, isMobile: externalIsMobile }
   }, [externalIsMobile]);
 
   return (
-    <Link href="/" className="pointer-events-auto inline-flex outline-none ring-0 border-none">
+    <Link href="https://ashmit-kumar.vercel.app" className="pointer-events-auto inline-flex outline-none ring-0 border-none">
       <motion.div
         ref={containerRef}
         onHoverStart={() => !isMobile && setHovered(true)}
@@ -108,7 +120,7 @@ export default function ExpandableLogo({ size = 30, isMobile: externalIsMobile }
             isMobile
               ? undefined
               : {
-                width: hovered ? expandedTextWidth : 0,
+                width: expandedTextWidth,
                 backgroundColor: "transparent",
               }
           }
@@ -119,7 +131,7 @@ export default function ExpandableLogo({ size = 30, isMobile: externalIsMobile }
           <div style={{ paddingLeft: spacingBetween, paddingRight: textRightPadding }}>
             <motion.span
               initial={{ opacity: 0 }}
-              animate={hovered ? { opacity: 1 } : { opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{ ...spring, duration: 0.25 }}
               className="text-white font-bold tracking-widest whitespace-nowrap text-sm"
               style={{ pointerEvents: "none" }}

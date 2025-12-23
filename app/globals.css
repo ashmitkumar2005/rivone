@@ -109,4 +109,30 @@ body {
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Prevent text selection and blinking cursor globally */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  caret-color: transparent;
+}
+
+/* Ensure inputs don't show outlines/rings that look like cursors */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+}
+
+@keyframes equalizer {
+
+  0%,
+  100% {
+    height: 4px;
+  }
+
+  50% {
+    height: 16px;
+  }
 }

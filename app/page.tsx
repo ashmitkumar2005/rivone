@@ -1,6 +1,10 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 
-export default function Home() {
+export default async function Home() {
+  const cookieStore = await cookies();
+  const hasAccess = cookieStore.get("rivon-access")?.value === "true";
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-8 text-center animate-fade-in">
 
@@ -16,10 +20,10 @@ export default function Home() {
 
       <div className="mt-12">
         <Link
-          href="/access"
+          href={hasAccess ? "/player" : "/access"}
           className="px-8 py-3 bg-white text-black font-semibold rounded-full hover:bg-zinc-200 transition-colors"
         >
-          Enter Access Key
+          {hasAccess ? "Access Playlist" : "Enter Access Key"}
         </Link>
       </div>
     </main>
