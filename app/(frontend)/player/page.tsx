@@ -115,7 +115,7 @@ export default function PlayerPage() {
     const fetchSongs = async () => {
         try {
             const res = await fetch("/api/songs");
-            const data = await res.json();
+            const data = (await res.json()) as Song[];
             if (Array.isArray(data)) {
                 setSongs(data);
             }
@@ -132,7 +132,7 @@ export default function PlayerPage() {
         setIsSyncing(true);
         try {
             const res = await fetch("/api/sync", { method: "POST" });
-            const data = await res.json();
+            const data = (await res.json()) as { success: boolean };
             if (data.success) {
                 await fetchSongs();
             }
