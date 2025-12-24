@@ -1,33 +1,36 @@
 # Rivone 🎵
 
-A private, modern, floating-style music player built for the Edge. Rivone streams and syncs audio files directly from Telegram, leveraging Cloudflare's global network for instant access and low latency.
+**Private. Floating. Instant.**
 
-## ✨ Features
+Rivone is an experimental music player engineered for the Edge. It redefines personal music streaming by combining the privacy of Telegram with the performance of Cloudflare's global network.
 
-- **Cloudflare Edge Runtime**: Fully optimized for Cloudflare Pages and Workers.
-- **Telegram Sync**: Automatically fetches audio files from a Telegram Bot.
-- **KV Storage**: Uses Cloudflare KV for persistent metadata storage.
-- **Floating UI**: A beautiful, responsive floating player built with Tailwind CSS.
-- **Zero-Node.js**: Runs entirely on web standard APIs (Fetch, Request, Response).
+![Rivone Player](https://indiehackers.com/images/default-avatar.png) 
+*(Project Screenshot Placeholder)*
 
-## 🛠️ Tech Stack
+## 💡 The Concept
 
-- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
-- **Deployment**: [Cloudflare Pages](https://pages.cloudflare.com/)
-- **Adapter**: [`@cloudflare/next-on-pages`](https://github.com/cloudflare/next-on-pages)
-- **Database**: [Cloudflare KV](https://developers.cloudflare.com/kv/)
-- **Styling**: Tailwind CSS
-- **Icons**: Lucide React
+Most music players are clunky and privacy-invasive. Rivone is different:
+- **Floating UI**: A glassmorphism-inspired interface that floats above your workflow.
+- **Instant Sync**: Wirelessly syncs your personal library in seconds.
+- **Edge Powered**: Zero-latency streaming from the nearest server location globally.
 
-## ⚠️ Copyright & License
+## 🛠️ Built With
+
+Proprietary architecture leveraging:
+- **Next.js App Router**
+- **Edge Computing Runtime**
+- **Distributed Key-Value Storage**
+- **Reactive UI Engine**
+
+## ⚠️ Intellectual Property Notice
 
 **Copyright © 2025 Ashmit Kumar. All Rights Reserved.**
 
-This project is proprietary software. Unauthorized copying, modification, distribution, or use of this source code, via any medium, is strictly prohibited. 
+This software is **proprietary** and **closed-source**. 
 
-This repository is for portfolio and demonstration purposes only.
+The code, design, and architecture contained in this repository are the intellectual property of Ashmit Kumar. Unauthorized copying, reverse engineering, distribution, or commercial use is strictly prohibited.
 
-## 🌐 Connect with Me
+## 🌐 Connect
 
 - **GitHub**: [ashmitkumar2005](https://github.com/ashmitkumar2005)
 - **LinkedIn**: [Ashmit Kumar](https://linkedin.com/in/ashmitkumar2005)
@@ -35,4 +38,4 @@ This repository is for portfolio and demonstration purposes only.
 
 ---
 
-Made with ❤️ by Ashmit Kumar
+*Designed & Engineered by Ashmit Kumar.*
