@@ -515,27 +515,29 @@ export default function PlayerPage() {
                                     onClick={() => setIsShuffle(!isShuffle)}
                                     className={`w-8 h-8 flex items-center justify-center rounded-full transition-all hover:bg-white/10 ${isShuffle ? 'text-white' : 'text-zinc-500'}`}
                                     title="Shuffle"
+                                    aria-label="Toggle Shuffle"
                                 >
                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                                     </svg>
                                 </button>
-                                <button onClick={playPrevious} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-white/70 hover:text-white">
+                                <button onClick={playPrevious} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-white/70 hover:text-white" aria-label="Previous Song">
                                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" /></svg>
                                 </button>
-                                <button onClick={togglePlay} className="w-10 h-10 flex items-center justify-center bg-gradient-to-br from-white to-zinc-400 text-black rounded-full hover:scale-105 active:scale-95 transition-all shadow-[0_0_15px_rgba(255,255,255,0.3)] border border-white/50 shrink-0">
+                                <button onClick={togglePlay} className="w-10 h-10 flex items-center justify-center bg-gradient-to-br from-white to-zinc-400 text-black rounded-full hover:scale-105 active:scale-95 transition-all shadow-[0_0_15px_rgba(255,255,255,0.3)] border border-white/50 shrink-0" aria-label={isPlaying ? "Pause" : "Play"}>
                                     {isPlaying ? (
                                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
                                     ) : (
                                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                                     )}
                                 </button>
-                                <button onClick={playNext} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-white/70 hover:text-white">
+                                <button onClick={playNext} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-white/70 hover:text-white" aria-label="Next Song">
                                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
                                 </button>
                                 <button
                                     onClick={() => setLoopMode(prev => prev === 'off' ? 'playlist' : prev === 'playlist' ? 'song' : 'off')}
                                     className={`w-8 h-8 flex items-center justify-center rounded-full transition-all hover:bg-white/10 ${loopMode !== 'off' ? 'text-white' : 'text-zinc-500'}`}
+                                    aria-label="Toggle Loop Mode"
                                 >
                                     <div className="relative flex items-center justify-center">
                                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -560,7 +562,7 @@ export default function PlayerPage() {
 
                             {/* Right: Volume */}
                             <div className="flex items-center gap-3 flex-none pl-2 border-l border-white/10">
-                                <button onClick={toggleMute} className="text-white hover:text-white/80">
+                                <button onClick={toggleMute} className="text-white hover:text-white/80" aria-label={volume === 0 ? "Unmute" : "Mute"}>
                                     {volume === 0 ? (
                                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" /></svg>
                                     ) : (
@@ -587,33 +589,33 @@ export default function PlayerPage() {
                                 </div>
                             </div>
                             <div className="flex items-center gap-2 w-auto justify-end order-2">
-                                <button onClick={toggleMute} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-white">
+                                <button onClick={toggleMute} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-white" aria-label={volume === 0 ? "Unmute" : "Mute"}>
                                     {volume === 0 ? (
                                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" /></svg>
                                     ) : (
                                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
                                     )}
                                 </button>
-                                <button onClick={() => setIsShuffle(!isShuffle)} className={`w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 ${isShuffle ? 'text-white' : 'text-zinc-500'}`} title="Shuffle">
+                                <button onClick={() => setIsShuffle(!isShuffle)} className={`w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 ${isShuffle ? 'text-white' : 'text-zinc-500'}`} title="Shuffle" aria-label="Toggle Shuffle">
                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
                                 </button>
-                                <button onClick={() => setLoopMode(prev => prev === 'off' ? 'playlist' : prev === 'playlist' ? 'song' : 'off')} className={`w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 ${loopMode !== 'off' ? 'text-white' : 'text-zinc-500'}`}>
+                                <button onClick={() => setLoopMode(prev => prev === 'off' ? 'playlist' : prev === 'playlist' ? 'song' : 'off')} className={`w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 ${loopMode !== 'off' ? 'text-white' : 'text-zinc-500'}`} aria-label="Toggle Loop Mode">
                                     <div className="relative flex items-center justify-center">
                                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                                         {loopMode === 'song' && <span className="absolute -top-1 -right-1 text-[8px] font-bold bg-white text-black rounded-full w-3 h-3 flex items-center justify-center">1</span>}
                                     </div>
                                 </button>
-                                <button onClick={playPrevious} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-white/70 hover:text-white">
+                                <button onClick={playPrevious} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-white/70 hover:text-white" aria-label="Previous Song">
                                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" /></svg>
                                 </button>
-                                <button onClick={togglePlay} className="w-10 h-10 flex items-center justify-center bg-gradient-to-br from-white to-zinc-400 text-black rounded-full hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(255,255,255,0.3)] border border-white/50 shrink-0">
+                                <button onClick={togglePlay} className="w-10 h-10 flex items-center justify-center bg-gradient-to-br from-white to-zinc-400 text-black rounded-full hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(255,255,255,0.3)] border border-white/50 shrink-0" aria-label={isPlaying ? "Pause" : "Play"}>
                                     {isPlaying ? (
                                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
                                     ) : (
                                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                                     )}
                                 </button>
-                                <button onClick={playNext} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-white/70 hover:text-white">
+                                <button onClick={playNext} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-white/70 hover:text-white" aria-label="Next Song">
                                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
                                 </button>
                             </div>
