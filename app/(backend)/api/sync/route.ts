@@ -1,10 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getRequestContext } from "@cloudflare/next-on-pages";
+import { isAuthenticated, unauthorizedResponse } from "@/lib/auth-check";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-export async function POST() {
+export async function POST(req: NextRequest) {
+    if (!isAuthenticated(req)) return unauthorizedResponse();
     try {
         const { env } = getRequestContext();
         const token = env.BOT_TOKEN;
@@ -36,7 +38,7 @@ export async function POST() {
 
         const deletedIds = new Set(deletedSongs.map(s => s.id));
 
-        for (const update of data.result) {
+        for (const update of (data as any).result) {
             const message = update.message || update.channel_post;
             if (message?.audio) {
                 const audio = message.audio;
@@ -91,6 +93,6 @@ export async function POST() {
     }
 }
 
-export async function GET() {
-    return POST();
+export async function GET(req: NextRequest) {
+    return POST(req);
 }

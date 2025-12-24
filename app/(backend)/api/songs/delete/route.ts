@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRequestContext } from "@cloudflare/next-on-pages";
+import { isAuthenticated, unauthorizedResponse } from "@/lib/auth-check";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
+    if (!isAuthenticated(request)) return unauthorizedResponse();
     try {
         const { env } = getRequestContext();
-        const { id } = await request.json();
+        const { id } = await request.json() as { id: string };
 
         // Read current songs from KV
         const songs: any[] = (await env.RIVONE_KV.get("songs", { type: "json" })) || [];

@@ -2,8 +2,12 @@ export const runtime = "edge"
 export const dynamic = "force-dynamic"
 
 import { NextRequest } from "next/server"
+import { isAuthenticated } from "@/lib/auth-check";
 
 export async function GET(request: NextRequest) {
+    if (!isAuthenticated(request)) {
+        return new Response("Unauthorized", { status: 401 });
+    }
     try {
         const { searchParams } = new URL(request.url)
         const fileId = searchParams.get("id")
@@ -47,7 +51,7 @@ export async function GET(request: NextRequest) {
             return new Response(`Telegram getFile failed: ${metaRes.status}`, { status: metaRes.status })
         }
 
-        const meta = await metaRes.json()
+        const meta = await metaRes.json() as any
         if (!meta.ok || !meta.result?.file_path) {
             console.error("Telegram getFile returned ok:false or no file_path:", meta)
             return new Response("telegram getFile failed", { status: 404 })
