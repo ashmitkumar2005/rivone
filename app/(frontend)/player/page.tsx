@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { songs as initialSongs, Song } from "@/lib/songs";
 import Lenis from "lenis";
+import SongList from "@/components/player/song-list";
+import { useToast } from "@/components/ui/toast";
 
 declare global {
     interface Window {
@@ -55,6 +57,7 @@ const CustomRange = ({ value, max, onChange, className = "", step = "0.01" }: Cu
 
 export default function PlayerPage() {
     const router = useRouter();
+    const { showToast } = useToast();
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const listRef = useRef<HTMLDivElement>(null);
     const [songs, setSongs] = useState<Song[]>([]);
@@ -135,9 +138,13 @@ export default function PlayerPage() {
             const data = (await res.json()) as { success: boolean };
             if (data.success) {
                 await fetchSongs();
+                showToast("Library synced successfully", "success");
+            } else {
+                showToast("Sync failed", "error");
             }
         } catch (error) {
             console.error("Sync failed:", error);
+            showToast("Sync failed to connect", "error");
         } finally {
             setIsSyncing(false);
         }
@@ -168,14 +175,18 @@ export default function PlayerPage() {
             });
             if (res.ok) {
                 await fetchSongs();
+                showToast("Song deleted", "success");
                 if (currentSong?.id === deleteConfirmation.songId) {
                     setCurrentSong(null);
                     setIsPlaying(false);
                     if (audioRef.current) audioRef.current.pause();
                 }
+            } else {
+                showToast("Failed to delete song", "error");
             }
         } catch (error) {
             console.error("Delete failed:", error);
+            showToast("Delete request failed", "error");
         } finally {
             setDeleteConfirmation({ isOpen: false, songId: null });
         }
@@ -431,55 +442,12 @@ export default function PlayerPage() {
                     className="flex-1 overflow-y-auto pr-4 custom-scrollbar pb-40 md:pb-0"
                     onWheel={(e) => e.stopPropagation()}
                 >
-                    <div className="space-y-3">
-                        {songs.map((song) => (
-                            <div
-                                role="button"
-                                key={song.id}
-                                onClick={() => handleSongClick(song)}
-                                className={`w-full text-left p-2 md:p-3 border rounded-[2rem] md:rounded-2xl transition-all duration-300 group flex items-center gap-3 md:gap-4 cursor-pointer select-none ${currentSong?.id === song.id
-                                    ? "bg-white/10 border-white/20 shadow-lg"
-                                    : "border-transparent hover:bg-white/5 hover:border-white/10"
-                                    }`}
-                            >
-                                <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden flex-shrink-0 bg-white/5">
-                                    {song.thumbId ? (
-                                        <img
-                                            src={`/api/stream?id=${song.thumbId}`}
-                                            alt={song.title}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-lg">🎵</div>
-                                    )}
-                                    {currentSong?.id === song.id && (
-                                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                                            <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full animate-pulse" />
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className={`font-medium text-sm md:text-base truncate transition-colors ${currentSong?.id === song.id ? "text-white" : "text-zinc-300 group-hover:text-white"
-                                        }`}>
-                                        {song.title}
-                                    </p>
-                                    <p className="text-xs md:text-sm text-zinc-500 truncate group-hover:text-zinc-400">
-                                        {song.artist}
-                                    </p>
-                                </div>
-                                <button
-                                    onClick={(e) => handleDeleteSong(e, song.id)}
-                                    className="p-2 text-zinc-500 hover:text-red-400 hover:bg-white/5 rounded-full transition-all opacity-100 lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100"
-                                    title="Delete song"
-                                    aria-label="Delete song"
-                                >
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                </button>
-                            </div>
-                        ))}
-                    </div>
+                    <SongList
+                        songs={songs}
+                        currentSong={currentSong}
+                        onSongClick={handleSongClick}
+                        onDeleteClick={handleDeleteSong}
+                    />
                 </div>
 
                 <audio ref={audioRef} />

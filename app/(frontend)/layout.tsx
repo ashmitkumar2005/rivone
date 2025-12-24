@@ -44,6 +44,10 @@ export const metadata: Metadata = {
   },
 };
 
+import { ToastProvider } from "@/components/ui/toast";
+
+// ... existing imports
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -54,11 +58,13 @@ export default function RootLayout({
       <body
         className={`${inter.variable} font-sans antialiased min-h-screen select-none`}
       >
-        <SmoothScroll />
-        <Navbar />
-        <BackgroundManager />
-        {children}
-        <Footer />
+        <ToastProvider>
+          <SmoothScroll />
+          <Navbar />
+          <BackgroundManager />
+          {children}
+          <Footer />
+        </ToastProvider>
       </body>
     </html>
   );
