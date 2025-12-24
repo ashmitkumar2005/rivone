@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { redis } from "@/lib/redis";
+import { getRequestContext } from "@cloudflare/next-on-pages";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
     try {
+        const { env } = getRequestContext();
         const { id } = await request.json();
 
-        // Read current songs from Redis
-        const songs: any[] = (await redis.get("songs")) as any[] || [];
+        // Read current songs from KV
+        const songs: any[] = (await env.RIVON_DB.get("songs", { type: "json" })) || [];
 
         // Find song to delete
         const songToDelete = songs.find((s: any) => s.id === id);
@@ -21,14 +22,14 @@ export async function POST(request: NextRequest) {
         const updatedSongs = songs.filter((s: any) => s.id !== id);
 
         // Add to deleted_songs
-        const deletedSongs: any[] = (await redis.get("deleted_songs")) as any[] || [];
+        const deletedSongs: any[] = (await env.RIVON_DB.get("deleted_songs", { type: "json" })) || [];
         if (!deletedSongs.some(s => s.id === id)) {
             deletedSongs.push(songToDelete);
         }
 
-        // Update Redis
-        await redis.set("songs", updatedSongs);
-        await redis.set("deleted_songs", deletedSongs);
+        // Update KV
+        await env.RIVON_DB.put("songs", JSON.stringify(updatedSongs));
+        await env.RIVON_DB.put("deleted_songs", JSON.stringify(deletedSongs));
 
         return NextResponse.json({ success: true });
     } catch (error) {

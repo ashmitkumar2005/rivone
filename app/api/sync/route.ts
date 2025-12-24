@@ -1,14 +1,16 @@
 import { NextResponse } from "next/server";
-import { redis } from "@/lib/redis";
+import { getRequestContext } from "@cloudflare/next-on-pages";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export async function POST() {
     try {
-        const token = process.env.BOT_TOKEN;
-        if (!token) {
-            return NextResponse.json({ error: "BOT_TOKEN missing" }, { status: 500 });
+        const { env } = getRequestContext();
+        const token = env.BOT_TOKEN;
+
+        if (!token || token === "process.env.BOT_TOKEN_PLACEHOLDER") {
+            return NextResponse.json({ error: "BOT_TOKEN missing in environment variables" }, { status: 500 });
         }
 
         const response = await fetch(
@@ -17,13 +19,21 @@ export async function POST() {
         const data = await response.json();
 
         if (!data.ok) {
-            return NextResponse.json({ error: "Telegram API error" }, { status: 500 });
+            console.error("Telegram API Error:", data);
+            return NextResponse.json({ error: "Telegram API error", details: data }, { status: 500 });
         }
 
         const newSongs: any[] = [];
         const seenFileIds = new Set<string>();
 
-        const deletedSongs: any[] = (await redis.get("deleted_songs")) as any[] || [];
+        // Safely access KV
+        let deletedSongs: any[] = [];
+        try {
+            deletedSongs = (await env.RIVON_DB.get("deleted_songs", { type: "json" })) || [];
+        } catch (e) {
+            console.warn("Failed to read deleted_songs from KV", e);
+        }
+
         const deletedIds = new Set(deletedSongs.map(s => s.id));
 
         for (const update of data.result) {
@@ -50,7 +60,13 @@ export async function POST() {
             }
         }
 
-        let existingSongs: any[] = (await redis.get("songs")) as any[] || [];
+        let existingSongs: any[] = [];
+        try {
+            existingSongs = (await env.RIVON_DB.get("songs", { type: "json" })) || [];
+        } catch (e) {
+            console.warn("Failed to read songs from KV", e);
+        }
+
         if (!Array.isArray(existingSongs)) existingSongs = [];
 
         let added = 0;
@@ -61,7 +77,7 @@ export async function POST() {
             }
         }
 
-        await redis.set("songs", existingSongs);
+        await env.RIVON_DB.put("songs", JSON.stringify(existingSongs));
 
         return NextResponse.json({
             success: true,
@@ -71,7 +87,7 @@ export async function POST() {
 
     } catch (err) {
         console.error("SYNC ERROR 👉", err);
-        return NextResponse.json({ error: "Sync failed" }, { status: 500 });
+        return NextResponse.json({ error: "Sync failed", details: String(err) }, { status: 500 });
     }
 }
 

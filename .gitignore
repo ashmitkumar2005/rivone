@@ -40,3 +40,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env*.local
+
+# Cloudflare
+.dev.vars
+.wrangler
+
+# Logs
+build_log*.txt

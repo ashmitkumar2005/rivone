@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
-import { redis } from "@/lib/redis";
+import { getRequestContext } from "@cloudflare/next-on-pages";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
     try {
-        const deletedSongs = await redis.get("deleted_songs");
+        const { env } = getRequestContext();
+        const deletedSongs = await env.RIVON_DB.get("deleted_songs", { type: "json" });
         return NextResponse.json(deletedSongs || []);
     } catch (error) {
         return NextResponse.json({ error: "Failed to load deleted songs" }, { status: 500 });

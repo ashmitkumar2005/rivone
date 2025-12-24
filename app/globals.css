@@ -1,19 +1,8 @@
-@import "tailwindcss";
-
-@theme {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer utilities {
-  .animate-fade-in {
-    animation: fadeIn 1.2s ease-out forwards;
-  }
-
-  .animate-fade-in-up {
-    animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-
   .delay-100 {
     animation-delay: 100ms;
   }
@@ -31,69 +20,6 @@
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes gradient {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-@layer utilities {
-  .animate-gradient {
-    background-size: 200% auto;
-    animation: gradient 4s linear infinite;
-  }
-
-  .animate-heartbeat {
-    animation: heartbeat 1.5s ease-in-out infinite;
-  }
-}
-
-@keyframes heartbeat {
-
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-
-  50% {
-    transform: scale(1.1);
-    opacity: 0.8;
-  }
-}
-
-
-
 :root {
   --background: #000000;
   --foreground: #fafafa;
@@ -106,7 +32,7 @@ html {
 body {
   background-color: transparent;
   color: var(--foreground);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 

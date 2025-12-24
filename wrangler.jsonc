@@ -1,0 +1,16 @@
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "rivone",
+    "compatibility_date": "2025-07-18",
+    "compatibility_flags": [
+        "nodejs_compat"
+    ],
+    "pages_build_output_dir": ".vercel/output/static",
+    "kv_namespaces": [
+        {
+            "binding": "RIVON_DB",
+            "id": "rivon-kv-local",
+            "preview_id": "rivon-kv-local"
+        }
+    ],
+}
