@@ -1,4 +1,4 @@
 interface CloudflareEnv {
-    RIVON_DB: KVNamespace;
+    RIVONE_KV: KVNamespace;
     BOT_TOKEN?: string;
 }

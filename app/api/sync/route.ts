@@ -29,7 +29,7 @@ export async function POST() {
         // Safely access KV
         let deletedSongs: any[] = [];
         try {
-            deletedSongs = (await env.RIVON_DB.get("deleted_songs", { type: "json" })) || [];
+            deletedSongs = (await env.RIVONE_KV.get("deleted_songs", { type: "json" })) || [];
         } catch (e) {
             console.warn("Failed to read deleted_songs from KV", e);
         }
@@ -62,7 +62,7 @@ export async function POST() {
 
         let existingSongs: any[] = [];
         try {
-            existingSongs = (await env.RIVON_DB.get("songs", { type: "json" })) || [];
+            existingSongs = (await env.RIVONE_KV.get("songs", { type: "json" })) || [];
         } catch (e) {
             console.warn("Failed to read songs from KV", e);
         }
@@ -77,7 +77,7 @@ export async function POST() {
             }
         }
 
-        await env.RIVON_DB.put("songs", JSON.stringify(existingSongs));
+        await env.RIVONE_KV.put("songs", JSON.stringify(existingSongs));
 
         return NextResponse.json({
             success: true,

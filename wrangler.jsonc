@@ -8,7 +8,7 @@
     "pages_build_output_dir": ".vercel/output/static",
     // "kv_namespaces": [
     //     {
-    //         "binding": "RIVON_DB",
+    //         "binding": "RIVONE_KV",
     //         "id": "rivon-kv-local",
     //         "preview_id": "rivon-kv-local"
     //     }

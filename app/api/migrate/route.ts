@@ -11,16 +11,13 @@ export async function GET() {
         const { env } = getRequestContext();
 
         // 1. Check if KV already has data to avoid overwriting accidentally (optional, but safer)
-        const existing = await env.RIVON_DB.get("songs", { type: "json" });
-        if (Array.isArray(existing) && existing.length > 0) {
-            return NextResponse.json({
-                message: "KV already has data. Skipping migration.",
-                count: existing.length
-            });
+        const existing = await env.RIVONE_KV.get("songs", { type: "json" });
+        if (existing) {
+            return NextResponse.json({ message: "Data already exists" });
         }
 
-        // 2. Seed with data from songs.json
-        await env.RIVON_DB.put("songs", JSON.stringify(initialSongs));
+        // Seeding initial data from your local file
+        await env.RIVONE_KV.put("songs", JSON.stringify(initialSongs));
 
         return NextResponse.json({
             success: true,

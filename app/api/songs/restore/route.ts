@@ -10,8 +10,8 @@ export async function POST(request: NextRequest) {
         const { id } = await request.json();
 
         // Get lists from KV
-        const deletedSongs: any[] = (await env.RIVON_DB.get("deleted_songs", { type: "json" })) || [];
-        const songs: any[] = (await env.RIVON_DB.get("songs", { type: "json" })) || [];
+        const deletedSongs: any[] = (await env.RIVONE_KV.get("deleted_songs", { type: "json" })) || [];
+        const songs: any[] = (await env.RIVONE_KV.get("songs", { type: "json" })) || [];
 
         // Find song in trash
         const songToRestore = deletedSongs.find((s: any) => s.id === id);
@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
         }
 
         // Update KV
-        await env.RIVON_DB.put("deleted_songs", JSON.stringify(updatedDeleted));
-        await env.RIVON_DB.put("songs", JSON.stringify(songs));
+        await env.RIVONE_KV.put("deleted_songs", JSON.stringify(updatedDeleted));
+        await env.RIVONE_KV.put("songs", JSON.stringify(songs));
 
         return NextResponse.json({ success: true });
     } catch (error) {

@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
     try {
         const { env } = getRequestContext();
-        const deletedSongs = await env.RIVON_DB.get("deleted_songs", { type: "json" });
+        const deletedSongs = await env.RIVONE_KV.get("deleted_songs", { type: "json" });
         return NextResponse.json(deletedSongs || []);
     } catch (error) {
         return NextResponse.json({ error: "Failed to load deleted songs" }, { status: 500 });
