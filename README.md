@@ -88,6 +88,12 @@ After your project is created, you must configure the backend:
 - `/lib`: Helper functions.
 - `wrangler.jsonc`: Cloudflare Workers configuration.
 
+## 🌐 Connect with Me
+
+- **GitHub**: [ashmitkumar2005](https://github.com/ashmitkumar2005)
+- **LinkedIn**: [Ashmit Kumar](https://linkedin.com/in/ashmitkumar2005)
+- **Portfolio**: [ashmit-kumar.vercel.app](https://ashmit-kumar.vercel.app)
+
 ---
 
 Made with ❤️ by Ashmit Kumar
