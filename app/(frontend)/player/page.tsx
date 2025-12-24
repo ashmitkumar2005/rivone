@@ -61,6 +61,7 @@ export default function PlayerPage() {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const listRef = useRef<HTMLDivElement>(null);
     const [songs, setSongs] = useState<Song[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if (!listRef.current) return;
@@ -124,6 +125,8 @@ export default function PlayerPage() {
             }
         } catch (error) {
             console.error("Failed to fetch songs:", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -447,6 +450,7 @@ export default function PlayerPage() {
                         currentSong={currentSong}
                         onSongClick={handleSongClick}
                         onDeleteClick={handleDeleteSong}
+                        isLoading={isLoading}
                     />
                 </div>
 

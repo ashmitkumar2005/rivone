@@ -10,7 +10,23 @@ interface SongListProps {
     onDeleteClick: (e: React.MouseEvent, id: string) => void;
 }
 
-const SongList = memo(({ songs, currentSong, onSongClick, onDeleteClick }: SongListProps) => {
+const SongList = memo(({ songs, currentSong, onSongClick, onDeleteClick, isLoading }: SongListProps & { isLoading?: boolean }) => {
+    if (isLoading) {
+        return (
+            <div className="space-y-3">
+                {[...Array(5)].map((_, i) => (
+                    <div key={i} className="w-full h-[72px] md:h-[80px] p-2 md:p-3 border border-white/5 rounded-[2rem] md:rounded-2xl flex items-center gap-3 md:gap-4 animate-pulse">
+                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 flex-shrink-0" />
+                        <div className="flex-1 min-w-0 space-y-2">
+                            <div className="h-4 bg-white/10 rounded w-1/3" />
+                            <div className="h-3 bg-white/10 rounded w-1/4" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-3">
             {songs.map((song) => (
@@ -28,7 +44,10 @@ const SongList = memo(({ songs, currentSong, onSongClick, onDeleteClick }: SongL
                             <img
                                 src={`/api/stream?id=${song.thumbId}`}
                                 alt={song.title}
+                                width={48}
+                                height={48}
                                 className="w-full h-full object-cover"
+                                loading="lazy"
                             />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center text-lg">🎵</div>
