@@ -9,15 +9,25 @@ export default function AccessPage() {
     const [error, setError] = useState(false);
     const router = useRouter();
 
-    const handleUnlock = () => {
-        if (key === "2903") {
-            // Set cookie for 30 days
-            document.cookie = "rivon-access=true; path=/; max-age=2592000; SameSite=Strict";
-            router.push("/player");
-        } else {
+    const handleUnlock = async () => {
+        try {
+            const res = await fetch("/api/auth", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ key }),
+            });
+
+            if (res.ok) {
+                router.push("/player");
+                router.refresh();
+            } else {
+                setError(true);
+                setKey("");
+                setTimeout(() => setError(false), 2000);
+            }
+        } catch (e) {
+            console.error("Auth error", e);
             setError(true);
-            setKey("");
-            setTimeout(() => setError(false), 2000);
         }
     };
 
