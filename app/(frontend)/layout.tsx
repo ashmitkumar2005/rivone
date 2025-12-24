@@ -15,8 +15,32 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Rivone",
-  description: "Private Music. Your Space.",
+  title: {
+    default: "Rivone | Private Music Cloud",
+    template: "%s | Rivone",
+  },
+  description: "Your private, encrypted music streaming vault. Powered by Edge Computing.",
+  keywords: ["music", "streaming", "cloud", "private", "encrypted", "edge"],
+  authors: [{ name: "Ashmit Kumar", url: "https://ashmit-kumar.vercel.app" }],
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://rivone.vercel.app",
+    title: "Rivone | Private Music Cloud",
+    description: "Your private, encrypted music streaming vault.",
+    siteName: "Rivone",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Rivone",
+    description: "Private Music. Your Space.",
+    creator: "@ashmitkumar",
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+  },
 };
 
 export default function RootLayout({

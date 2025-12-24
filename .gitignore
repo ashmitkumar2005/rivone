@@ -44,6 +44,8 @@ next-env.d.ts
 # Cloudflare
 .dev.vars
 .wrangler
+wrangler.jsonc
+wrangler.dev.jsonc
 
 # Logs
 build_log*.txt
