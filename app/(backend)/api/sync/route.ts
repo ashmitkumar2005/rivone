@@ -15,10 +15,38 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "BOT_TOKEN missing in environment variables" }, { status: 500 });
         }
 
+        interface TelegramUpdate {
+            ok: boolean;
+            result: Array<{
+                message?: {
+                    audio?: {
+                        file_id: string;
+                        file_unique_id: string;
+                        title?: string;
+                        performer?: string;
+                        thumbnail?: {
+                            file_id: string;
+                        };
+                    };
+                };
+                channel_post?: {
+                    audio?: {
+                        file_id: string;
+                        file_unique_id: string;
+                        title?: string;
+                        performer?: string;
+                        thumbnail?: {
+                            file_id: string;
+                        };
+                    };
+                };
+            }>;
+        }
+
         const response = await fetch(
             `https://api.telegram.org/bot${token}/getUpdates`
         );
-        const data = await response.json();
+        const data = (await response.json()) as TelegramUpdate;
 
         if (!data.ok) {
             console.error("Telegram API Error:", data);
@@ -38,7 +66,7 @@ export async function POST(req: NextRequest) {
 
         const deletedIds = new Set(deletedSongs.map(s => s.id));
 
-        for (const update of (data as any).result) {
+        for (const update of data.result) {
             const message = update.message || update.channel_post;
             if (message?.audio) {
                 const audio = message.audio;
