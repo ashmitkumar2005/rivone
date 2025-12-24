@@ -1,104 +1,93 @@
-# RIVONE
+# Rivone 🎵
 
-**Private Music. Your Space.**
+A modern, floating-style music player built for the Edge. Rivone streams and syncs audio files directly from Telegram, leveraging Cloudflare's global network for instant access and low latency.
 
-RIVONE is a high-fidelity, personal music streaming application built with Next.js. It features a stunning, immersive UI with liquid background effects, seamless Telegram-based audio streaming, and a glassmorphism aesthetic.
-<img width="1920" height="1080" alt="Screenshot_20251222_225809" src="https://github.com/user-attachments/assets/d75d9f89-cd1b-4462-88e0-05d7d3ba9153" />
-<img width="1920" height="1080" alt="Screenshot_20251222_225842" src="https://github.com/user-attachments/assets/a0e806cc-52e9-4cea-98f1-3bc02afa62e7" />
-<img width="1920" height="1080" alt="Screenshot_20251222_225922" src="https://github.com/user-attachments/assets/7509eb2f-1165-484d-a76a-016a03d8824b" />
+## ✨ Features
 
+- **Cloudflare Edge Runtime**: Fully optimized for Cloudflare Pages and Workers.
+- **Telegram Sync**: Automatically fetches audio files from a Telegram Bot.
+- **KV Storage**: Uses Cloudflare KV (`RIVONE_KV`) for persistent metadata storage.
+- **Floating UI**: A beautiful, responsive floating player built with Tailwind CSS.
+- **Zero-Node.js**: Runs entirely on web standard APIs (Fetch, Request, Response).
 
+## 🛠️ Tech Stack
 
-##  Features
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **Deployment**: [Cloudflare Pages](https://pages.cloudflare.com/)
+- **Adapter**: [`@cloudflare/next-on-pages`](https://github.com/cloudflare/next-on-pages)
+- **Database**: [Cloudflare KV](https://developers.cloudflare.com/kv/)
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React
 
--   **Immersive Visuals**:
-    -   **Liquid Background**: Interactive, audio-reactive 3D liquid simulation using Three.js.
-    -   **Glassmorphism UI**: Premium, frosted-glass styling for all components.
-    -   **Dynamic Animations**: Smooth transitions powered by Framer Motion.
-    -   **Interactive Logo**: Custom expandable pill-shaped logo in the navbar.
-
--   **Smart Audio Player**:
-    -   **Telegram Integration**: Streams audio files directly from a private Telegram channel.
-    -   **Audio Visualization**: Real-time bass reactivity on the background.
-    -   **Smart Footer**: A global footer that intelligently docks to the bottom-right when the player is active to avoid clutter.
-    -   **Full Playback Controls**: Play, pause, seek, volume, and track info.
-
--   **Music Management**:
-    -   **Sync System**: `Sync` button to fetch the latest audio files from your Telegram channel.
-    -   **Song Registry**: A verified list of your available tracks.
-    -   **Persistent Deletion**: Delete songs locally, and they stay deleted (via `ignored.json`) even after re-syncing.
-
-##  Tech Stack
-
--   **Framework**: [Next.js 14+](https://nextjs.org/) (App Router)
--   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
--   **Animations**: [Framer Motion](https://www.framer.com/motion/)
--   **3D Effects**: [Three.js](https://threejs.org/) & `threejs-components`
--   **Backend**: Next.js API Routes (Node.js runtime)
--   **Database**: Local JSON based (`data/songs.json`) with Telegram as the file host.
-
-##  Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 
--   Node.js 18+
--   A Telegram Bot Token
+- Node.js 18+
+- A Cloudflare Account
+- A Telegram Bot Token (from [@BotFather](https://t.me/BotFather))
 
-### Installation
+### 1. Installation
 
-1.  **Clone the repository**:
-    ```bash
-    git clone https://github.com/ashmitkumar2005/rivone.git
-    cd rivone
-    ```
+```bash
+git clone https://github.com/ashmitkumar2005/rivone-workers.git
+cd rivone-workers
+npm install
+```
 
-2.  **Install dependencies**:
-    ```bash
-    npm install
-    # or
-    yarn install
-    ```
+### 2. Local Development
 
-3.  **Environment Setup**:
-    Create a `.env.local` file in the root directory and add your keys:
+To run the project locally with full Cloudflare simulation:
+
+1.  **Configure Secrets**:
+    Create a `.dev.vars` file in the root directory:
     ```env
-    BOT_TOKEN=your_telegram_bot_token
+    BOT_TOKEN=your_telegram_bot_token_here
     ```
 
-    *Note: The `BOT_TOKEN` is used to fetch file paths from Telegram's API.*
-
-4.  **Run the development server**:
+2.  **Start Preview Server**:
+    Rivone uses `wrangler` to simulate the Edge environment locally.
     ```bash
-    npm run dev
+    npm run preview
     ```
+    Visit `http://localhost:3000`.
 
-    Open [http://localhost:3000](http://localhost:3000) with your browser.
+> **Note**: Standard `npm run dev` will not work correctly for backend logic because it does not simulate the KV storage or Edge Runtime context provided by Cloudflare.
 
-##  Project Structure
+## 📦 Deployment
 
-```
-rivone/
-├── app/                  # Next.js App Router
-│   ├── api/              # API Routes (stream, sync, deletion)
-│   ├── player/           # Music Player Page
-│   ├── globals.css       # Global styles & animations
-│   ├── layout.tsx        # Root layout with Navbar & Footer
-│   └── page.tsx          # Homepage
-├── components/           # React Components
-│   ├── ui/               # Reusable UI elements (Navbar, Footer, LiquidEffect)
-│   └── ExpandableLogo.tsx # Custom Logo Component
-├── data/                 # Local data storage
-│   ├── songs.json        # Synced song list
-│   └── ignored.json      # Blacklisted songs
-├── public/               # Static assets (images, icons)
-└── lib/                  # Utilities (types, helpers)
-```
+### 1. Push to GitHub
+Commit your changes and push to your repository.
 
-##  Credits
+### 2. Cloudflare Pages
+1.  Connect your repository to **Cloudflare Pages**.
+2.  **Build Command**: `npx @cloudflare/next-on-pages@1`
+3.  **Output Directory**: `.vercel/output/static`
+4.  **Compatibility Flags**: Add `nodejs_compat` in Settings -> Build.
 
--   **Design & Development**: [Ashmit Kumar](https://ashmit-kumar.vercel.app)
--   **Made with**: ❤️ and Next.js
+### 3. Environment Config (Critical)
+After your project is created, you must configure the backend:
+
+1.  **Variables**: Add `BOT_TOKEN` in **Settings -> Environment Variables**.
+2.  **KV Namespace**:
+    - Go to **Settings -> Functions -> KV Namespace Bindings**.
+    - Create/Add a binding named **exactly** `RIVONE_KV`.
+    - Map it to a new KV namespace (e.g., `rivon-prod`).
+
+## 🔄 How Sync Works
+
+1.  **Forward Songs**: Forward mp3 files to your connected Telegram Bot.
+2.  **Click Sync**: In the Rivone app player, click the "Sync" button.
+3.  **Indexing**: The app fetches pending updates from Telegram and stores song metadata (Title, Artist, File ID) into your `RIVONE_KV` database.
+4.  **Streaming**: Songs are streamed directly using the Telegram File ID.
+
+## 📂 Project Structure
+
+- `/app`: Next.js App Router pages and layouts.
+- `/app/api`: Edge API routes (`sync`, `songs`, `stream`, etc.).
+- `/lib`: Helper functions.
+- `wrangler.jsonc`: Cloudflare Workers configuration.
 
 ---
 
-&copy; 2025 RIVONE. All rights reserved.
+Made with ❤️ by Ashmit Kumar
