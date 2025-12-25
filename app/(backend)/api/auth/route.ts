@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
                 maxAge: 2592000,
                 httpOnly: true,
                 secure: true,
-                sameSite: "strict",
+                sameSite: "lax",
             });
 
             return response;

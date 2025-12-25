@@ -154,7 +154,7 @@ export default function PlayerPage() {
     };
 
     const handleLock = () => {
-        document.cookie = "rivon-access=; path=/; max-age=0; SameSite=Strict";
+        document.cookie = "rivon-access=; path=/; max-age=0; SameSite=Lax";
         router.push("/access");
     };
 
