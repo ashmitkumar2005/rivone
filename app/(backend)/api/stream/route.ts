@@ -2,6 +2,7 @@ export const runtime = "edge"
 export const dynamic = "force-dynamic"
 
 import { NextRequest } from "next/server"
+import { getRequestContext } from "@cloudflare/next-on-pages";
 import { isAuthenticated } from "@/lib/auth-check";
 
 export async function GET(request: NextRequest) {
@@ -16,7 +17,8 @@ export async function GET(request: NextRequest) {
             return new Response("missing file id", { status: 400 })
         }
 
-        const token = process.env.BOT_TOKEN
+        const { env } = getRequestContext();
+        const token = env.BOT_TOKEN;
         if (!token) {
             console.error("BOT_TOKEN is missing")
             return new Response("BOT_TOKEN missing", { status: 500 })
