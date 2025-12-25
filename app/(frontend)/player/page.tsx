@@ -93,7 +93,7 @@ export default function PlayerPage() {
     const [volume, setVolume] = useState(2);
     const [isHoveringUI, setIsHoveringUI] = useState(false);
     const [isSyncing, setIsSyncing] = useState(false);
-    const [loopMode, setLoopMode] = useState<'off' | 'playlist' | 'song'>('off');
+    const [loopMode, setLoopMode] = useState<'off' | 'playlist' | 'song'>('playlist');
     const [isShuffle, setIsShuffle] = useState(false);
     const [shuffleHistory, setShuffleHistory] = useState<string[]>([]);
     const lastVolumeRef = useRef(2); // Track volume before mute
