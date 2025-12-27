@@ -68,7 +68,7 @@ export default function ExpandableLogo({ size = 30, isMobile: externalIsMobile, 
   }, [externalIsMobile]);
 
   return (
-    <Link href="https://ashmit-kumar.vercel.app" className="pointer-events-auto inline-flex outline-none ring-0 border-none">
+    <Link href="/" className="pointer-events-auto inline-flex outline-none ring-0 border-none">
       <motion.div
         ref={containerRef}
         onHoverStart={() => !isMobile && setHovered(true)}

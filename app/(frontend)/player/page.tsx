@@ -153,9 +153,16 @@ export default function PlayerPage() {
         }
     };
 
-    const handleLock = () => {
-        document.cookie = "rivon-access=; path=/; max-age=0; SameSite=Lax";
-        router.push("/access");
+    const handleLock = async () => {
+        try {
+            await fetch("/api/logout", { method: "POST" });
+            router.refresh();
+            router.push("/access");
+        } catch (e) {
+            console.error("Logout failed", e);
+            // Fallback just in case
+            window.location.href = "/access";
+        }
     };
 
     const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean; songId: string | null }>({
