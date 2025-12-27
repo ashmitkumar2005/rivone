@@ -65,6 +65,8 @@ export default function AccessPage() {
                     >
                         Unlock Space
                     </button>
+
+
                     {error && (
                         <p className="text-red-400 text-xs text-center animate-fade-in">
                             Invalid access key

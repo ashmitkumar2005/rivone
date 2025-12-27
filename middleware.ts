@@ -9,7 +9,8 @@ export function middleware(request: NextRequest) {
     const isProtectedApi = path.startsWith('/api') && !path.startsWith('/api/auth')
 
     if (isProtectedPage || isProtectedApi) {
-        const hasAccess = request.cookies.get('rivon-access')?.value === 'true'
+        const cookieVal = request.cookies.get('rivon-access')?.value
+        const hasAccess = cookieVal === 'true' || cookieVal === 'guest'
 
         if (!hasAccess) {
             // Return 401 for API calls instead of redirecting

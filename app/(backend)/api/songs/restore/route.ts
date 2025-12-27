@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRequestContext } from "@cloudflare/next-on-pages";
-import { isAuthenticated, unauthorizedResponse } from "@/lib/auth-check";
+import { isAdmin, forbiddenResponse } from "@/lib/auth-check";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
-    if (!isAuthenticated(request)) return unauthorizedResponse();
+    if (!isAdmin(request)) return forbiddenResponse();
     try {
         const { env } = getRequestContext();
         const { id } = await request.json() as { id: string };

@@ -5,8 +5,22 @@ export const runtime = "edge";
 
 export async function POST(request: NextRequest) {
     try {
-        const { key } = await request.json() as { key: string };
+        const body = await request.json() as { key?: string, type?: string };
+        const { key, type } = body;
         const { env } = getRequestContext();
+
+        // Guest Access
+        if (type === "guest") {
+            const response = NextResponse.json({ success: true, isGuest: true });
+            response.cookies.set("rivon-access", "guest", {
+                path: "/",
+                maxAge: 86400 * 7, // 7 days
+                httpOnly: true,
+                secure: true,
+                sameSite: "lax",
+            });
+            return response;
+        }
 
         // Default password if not set in environment (Fallback for safety)
         const validPassword = env.PROJECT_PASSWORD;
@@ -17,7 +31,7 @@ export async function POST(request: NextRequest) {
         }
 
         if (key === validPassword) {
-            const response = NextResponse.json({ success: true });
+            const response = NextResponse.json({ success: true, isAdmin: true });
 
             // Set a secure, HTTP-only cookie
             // Max-age: 30 days (2592000 seconds)

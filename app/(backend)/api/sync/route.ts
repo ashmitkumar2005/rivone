@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRequestContext } from "@cloudflare/next-on-pages";
-import { isAuthenticated, unauthorizedResponse } from "@/lib/auth-check";
+import { isAdmin, forbiddenResponse } from "@/lib/auth-check";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
-    if (!isAuthenticated(req)) return unauthorizedResponse();
+    if (!isAdmin(req)) return forbiddenResponse();
     try {
         const { env } = getRequestContext();
         const token = env.BOT_TOKEN;
