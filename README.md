@@ -4,8 +4,10 @@
 
 Rivone is an experimental music player engineered for the Edge. It redefines personal music streaming by combining the privacy of Telegram with the performance of Cloudflare's global network.
 
-![Rivone Player](https://indiehackers.com/images/default-avatar.png) 
-*(Project Screenshot Placeholder)*
+<img width="1920" height="1080" alt="Screenshot_20251228_183816" src="https://github.com/user-attachments/assets/f7ce56e9-166d-4165-9d1d-487c33d94b18" />
+<img width="1920" height="1080" alt="Screenshot_20251228_183830" src="https://github.com/user-attachments/assets/93110a68-9885-4a59-9793-42f10290b1f2" />
+<img width="1920" height="1080" alt="Screenshot_20251228_183842" src="https://github.com/user-attachments/assets/027478cb-90fd-4f8f-8322-f8bd4da777ec" />
+
 
 ## 💡 The Concept
 
